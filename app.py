@@ -13,7 +13,10 @@ app.secret_key = "clave_secreta"
 import psycopg2
 import os
 
-db = psycopg2.connect(os.environ["DATABASE_URL"])
+db = psycopg2.connect(
+    os.environ["DATABASE_URL"],
+    sslmode="require"
+)
 
 # HOME
 @app.route("/")
