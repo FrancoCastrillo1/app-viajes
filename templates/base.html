@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>App Viajes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<body>
+
+    <nav>
+
+        <a href="/">Inicio</a>
+        <a href="/viajes">Ver viajes</a>
+
+        {% if session.user_id %}
+        <a href="/crear_viaje">Publicar viaje</a>
+        <a href="/perfil">Mi perfil</a>
+        <a href="/logout">Cerrar sesión</a>
+        {% else %}
+        <a href="/login">Login</a>
+        <a href="/register">Registrarse</a>
+        {% endif %}
+
+    </nav>
+
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+
+</html>
