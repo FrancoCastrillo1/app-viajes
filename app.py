@@ -1,18 +1,19 @@
 from flask import Flask, render_template, request, redirect, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import flash
-import mysql.connector
+import psycopg2
+from psycopg2.extras import RealDictCursor
+import os
+
 from datetime import date
 
 app = Flask(__name__)
 app.secret_key = "clave_secreta"
 
-db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="Franco1234",
-    database="viajes_app"
-)
+import psycopg2
+import os
+
+db = psycopg2.connect(os.environ["DATABASE_URL"])
 
 # HOME
 @app.route("/")
@@ -34,7 +35,7 @@ def register():
         password = generate_password_hash(request.form["password"])
 
 
-        cursor = db.cursor(dictionary=True, buffered=True)
+        cursor = db.cursor(cursor_factory=RealDictCursor)
 
         cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
         existing_user = cursor.fetchone()
@@ -67,7 +68,7 @@ def login():
         email = request.form["email"]
         password = request.form["password"]
 
-        cursor = db.cursor(dictionary=True, buffered=True)
+        cursor = db.cursor(cursor_factory=RealDictCursor)
 
         cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
         user = cursor.fetchone()
@@ -101,7 +102,7 @@ def crear_viaje():
         lugares = request.form["lugares"]
         precio = request.form["precio"]
 
-        cursor = db.cursor(dictionary=True, buffered=True)
+        cursor = db.cursor(cursor_factory=RealDictCursor)
 
         cursor.execute("""
     INSERT INTO viajes (user_id, origen, destino, encuentro, fecha, hora, lugares, precio)
@@ -122,7 +123,7 @@ def crear_viaje():
 @app.route("/viajes")
 def viajes():
 
-    cursor = db.cursor(dictionary=True, buffered=True)
+    cursor = db.cursor(cursor_factory=RealDictCursor)
 
 
     cursor.execute("""
@@ -146,7 +147,7 @@ def reservar(viaje_id):
     if "user_id" not in session:
         return redirect("/login")
 
-    cursor = db.cursor(dictionary=True, buffered=True)
+    cursor = db.cursor(cursor_factory=RealDictCursor)
 
 
     cursor.execute("""
@@ -183,7 +184,7 @@ def perfil():
     if "user_id" not in session:
         return redirect("/login")
 
-    cursor = db.cursor(dictionary=True, buffered=True)
+    cursor = db.cursor(cursor_factory=RealDictCursor)
 
 
     # datos del usuario
@@ -253,7 +254,7 @@ def cancelar_viaje(viaje_id):
     if "user_id" not in session:
         return redirect("/login")
 
-    cursor = db.cursor(dictionary=True, buffered=True)
+    cursor = db.cursor(cursor_factory=RealDictCursor)
 
 
     cursor.execute("""
