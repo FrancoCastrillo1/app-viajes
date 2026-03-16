@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Viajes disponibles</h2>
+
+{% for viaje in viajes %}
+<div class="card">
+
+<p><strong>{{ viaje.origen }}</strong> → <strong>{{ viaje.destino }}</strong></p>
+
+<p><b>Fecha: {{ viaje.fecha }} | Hora: {{ viaje.hora }}</b></p>
+
+<p><b>Precio:</b> ${{ viaje.precio }}</p>
+
+<p><b>Lugares disponibles:</b> {{ viaje.lugares }}</p>
+
+<p><b>Lugar de Encuentro para la salida:</b> {{ viaje.encuentro }}</p>
+
+<p><strong><b>Conductor:</b></strong> {{ viaje.nombre }} {{ viaje.apellido }}</p>
+
+<p><strong><b>Teléfono: </b></strong> {{ viaje.telefono }}</p>
+
+{% if viaje.lugares > 0 %}
+<form action="/reservar/{{ viaje.id }}" method="POST">
+    <button>Reservar</button>
+</form>
+{% else %}
+<p>No hay asientos disponibles</p>
+{% endif %}
+
+
+</div>
+{% endfor %}
+
+{% endblock %}
