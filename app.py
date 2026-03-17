@@ -12,6 +12,8 @@ resend.api_key = "re_39rnQkqH_NBoNsYkeoferdxo2Lv4dGrKL"
 app = Flask(__name__)
 app.secret_key = "clave_secreta"
 
+resend.api_key = os.environ.get("RESEND_API_KEY")
+
 # FUNCIÓN DE CONEXIÓN (La clave para que no falle)
 def get_db_connection():
     return psycopg2.connect(
