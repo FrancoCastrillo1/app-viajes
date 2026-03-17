@@ -1,105 +1,89 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import flash
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from psycopg2 import sql
 import os
-
 from datetime import date
 
 app = Flask(__name__)
 app.secret_key = "clave_secreta"
 
-import psycopg2
-import os
-
-db = psycopg2.connect(
-    os.environ["DATABASE_URL"],
-    sslmode="require"
-)
+# FUNCIÓN DE CONEXIÓN (La clave para que no falle)
+def get_db_connection():
+    return psycopg2.connect(
+        os.environ["DATABASE_URL"],
+        sslmode="require"
+    )
 
 # HOME
 @app.route("/")
 def index():
     return render_template("index.html")
 
-
 # REGISTER
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
-
     if request.method == "POST":
-
         nombre = request.form["nombre"]
         apellido = request.form["apellido"]
         telefono = request.form["telefono"]
         email = request.form["email"]
         password = generate_password_hash(request.form["password"])
 
-
-        cursor = db.cursor(cursor_factory=RealDictCursor)
-
-        cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
-        existing_user = cursor.fetchone()
-
-        if existing_user:
-            flash("ERROR: Este email ya está registrado. Inicie sesion o utilice otro email")
-            return render_template("register.html")
-        
-        
-        cursor.execute("""
-        INSERT INTO users (nombre, apellido, telefono, email, password)
-        VALUES (%s, %s, %s, %s, %s)
-        """, (nombre, apellido, telefono, email, password))
-    
-        db.commit()
-
-        return redirect("/login")
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        try:
+            cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
+            if cursor.fetchone():
+                flash("ERROR: Este email ya está registrado.")
+                return render_template("register.html")
+            
+            cursor.execute("""
+                INSERT INTO users (nombre, apellido, telefono, email, password)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (nombre, apellido, telefono, email, password))
+            conn.commit()
+            return redirect("/login")
+        finally:
+            cursor.close()
+            conn.close()
 
     return render_template("register.html")
 
-
 # LOGIN
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    
-    
-    
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
 
-        cursor = db.cursor(cursor_factory=RealDictCursor)
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        try:
+            cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
+            user = cursor.fetchone()
 
-        cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
-        user = cursor.fetchone()
-
-        if user and check_password_hash(user["password"], password):
-            session["user_id"] = user["id"]
-            return redirect("/viajes")
-        else:
-            flash("Email o contraseña incorrectos")
-            return render_template("login.html")
+            if user and check_password_hash(user["password"], password):
+                session["user_id"] = user["id"]
+                return redirect("/viajes")
+            else:
+                flash("Email o contraseña incorrectos")
+                return render_template("login.html")
+        finally:
+            cursor.close()
+            conn.close()
 
     return render_template("login.html")
 
-#LOG OUT
-
+# LOGOUT
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
-
-
 # CREAR VIAJE
-
 @app.route("/crear_viaje", methods=["GET", "POST"])
 def crear_viaje():
-    
     if "user_id" not in session:
         return redirect("/login")
     
@@ -113,188 +97,138 @@ def crear_viaje():
         lugares = request.form["lugares"]
         precio = request.form["precio"]
 
-        cursor = db.cursor(cursor_factory=RealDictCursor)
-
-        cursor.execute("""
-    INSERT INTO viajes (user_id, origen, destino, encuentro, fecha, hora, lugares, precio)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-""", (session["user_id"], origen, destino, encuentro, fecha, hora, lugares, precio))
-
-        db.commit()
-
-        return redirect("/viajes")
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        try:
+            cursor.execute("""
+                INSERT INTO viajes (user_id, origen, destino, encuentro, fecha, hora, lugares, precio)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, (session["user_id"], origen, destino, encuentro, fecha, hora, lugares, precio))
+            conn.commit()
+            return redirect("/viajes")
+        finally:
+            cursor.close()
+            conn.close()
 
     return render_template("crear_viaje.html", fecha_hoy=fecha_hoy)
 
-
 # VER VIAJES
-
-# VER VIAJES
-
 @app.route("/viajes")
 def viajes():
+    conn = get_db_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        # Nota: Usamos ::timestamp para comparar fecha y hora correctamente en Postgres
+        cursor.execute("""
+            SELECT viajes.*, users.nombre, users.apellido, users.telefono
+            FROM viajes
+            JOIN users ON viajes.user_id = users.id
+            WHERE viajes.lugares > 0
+            AND (viajes.fecha + viajes.hora)::timestamp > NOW()
+            ORDER BY viajes.fecha, viajes.hora
+        """)
+        viajes_lista = cursor.fetchall()
+        return render_template("viajes.html", viajes=viajes_lista)
+    finally:
+        cursor.close()
+        conn.close()
 
-    cursor = db.cursor(cursor_factory=RealDictCursor)
-
-
-    cursor.execute("""
-        SELECT viajes.*, users.nombre, users.apellido, users.telefono
-        FROM viajes
-        JOIN users ON viajes.user_id = users.id
-        WHERE viajes.lugares > 0
-        AND (viajes.fecha + viajes.hora) > NOW()
-        ORDER BY viajes.fecha, viajes.hora
-    """)
-
-    viajes = cursor.fetchall()
-
-    return render_template("viajes.html", viajes=viajes)
-
-#RESERVAR
-
+# RESERVAR
 @app.route("/reservar/<int:viaje_id>", methods=["POST"])
 def reservar(viaje_id):
-
     if "user_id" not in session:
         return redirect("/login")
 
-    cursor = db.cursor(cursor_factory=RealDictCursor)
+    conn = get_db_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        # Verificar si es el mismo conductor
+        cursor.execute("SELECT user_id FROM viajes WHERE id = %s", (viaje_id,))
+        viaje = cursor.fetchone()
+        if viaje and viaje["user_id"] == session["user_id"]:
+            return redirect("/viajes")
 
-
-    cursor.execute("""
-        SELECT *
-        FROM reservas
-        WHERE viaje_id = %s AND user_id = %s
-    """, (viaje_id, session["user_id"]))
-    
-    reserva_existente = cursor.fetchone()
-    
-    if reserva_existente:
-        return redirect("/viajes")
-    
-    cursor.execute("""
-        INSERT INTO reservas (viaje_id, user_id)
-        VALUES (%s, %s)
-    """, (viaje_id, session["user_id"]))
-
-    cursor.execute("""
-        UPDATE viajes
-        SET lugares = lugares - 1
-        WHERE id = %s AND lugares > 0
-    """, (viaje_id,))
-    
-    cursor.execute("SELECT user_id FROM viajes WHERE id = %s", (viaje_id,))
-    viaje = cursor.fetchone()
-
-    if viaje["user_id"] == session["user_id"]:
-        return redirect("/viajes")
-
-    db.commit()
+        # Verificar reserva existente
+        cursor.execute("SELECT * FROM reservas WHERE viaje_id = %s AND user_id = %s", (viaje_id, session["user_id"]))
+        if cursor.fetchone():
+            return redirect("/viajes")
+        
+        # Realizar reserva y descontar lugar
+        cursor.execute("INSERT INTO reservas (viaje_id, user_id) VALUES (%s, %s)", (viaje_id, session["user_id"]))
+        cursor.execute("UPDATE viajes SET lugares = lugares - 1 WHERE id = %s AND lugares > 0", (viaje_id,))
+        conn.commit()
+    finally:
+        cursor.close()
+        conn.close()
 
     return redirect("/viajes")
 
-#PERFIL USUARIOS
-
+# PERFIL
 @app.route("/perfil")
 def perfil():
-
     if "user_id" not in session:
         return redirect("/login")
 
-    cursor = db.cursor(cursor_factory=RealDictCursor)
+    conn = get_db_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        # Datos del usuario
+        cursor.execute("SELECT nombre, apellido, telefono, email FROM users WHERE id = %s", (session["user_id"],))
+        user = cursor.fetchone()
 
+        # Reservas que hizo el usuario
+        cursor.execute("""
+            SELECT viajes.*, conductor.nombre AS conductor_nombre, conductor.apellido AS conductor_apellido
+            FROM reservas
+            JOIN viajes ON reservas.viaje_id = viajes.id
+            JOIN users AS conductor ON viajes.user_id = conductor.id
+            WHERE reservas.user_id = %s
+        """, (session["user_id"],))
+        mis_reservas = cursor.fetchall()
 
-    # datos del usuario
-    cursor.execute("""
-        SELECT nombre, apellido, telefono, email
-        FROM users
-        WHERE id = %s
-    """, (session["user_id"],))
+        # Viajes que publicó el usuario
+        cursor.execute("SELECT * FROM viajes WHERE user_id = %s ORDER BY fecha DESC", (session["user_id"],))
+        mis_publicaciones = cursor.fetchall()
 
-    user = cursor.fetchone()
+        # Quién reservó mis viajes (para ver los pasajeros)
+        cursor.execute("""
+            SELECT reservas.viaje_id, users.nombre, users.apellido
+            FROM reservas
+            JOIN users ON reservas.user_id = users.id
+        """)
+        pasajeros = cursor.fetchall()
 
-    # reservas del usuario
-    cursor.execute("""
-    SELECT 
-        viajes.origen,
-        viajes.destino,
-        viajes.fecha,
-        viajes.hora,
-        viajes.precio,
-        conductor.nombre AS conductor_nombre,
-        conductor.apellido AS conductor_apellido
-    FROM reservas
-    JOIN viajes ON reservas.viaje_id = viajes.id
-    JOIN users AS conductor ON viajes.user_id = conductor.id
-    WHERE reservas.user_id = %s
-    """, (session["user_id"],))
+        return render_template("perfil.html", 
+                               user=user, 
+                               mis_reservas=mis_reservas, 
+                               viajes=mis_publicaciones, 
+                               reservas=pasajeros, 
+                               cantidad_viajes=len(mis_publicaciones))
+    finally:
+        cursor.close()
+        conn.close()
 
-    mis_reservas = cursor.fetchall()
-
-
-    # viajes publicados
-    cursor.execute("""
-        SELECT *
-        FROM viajes
-        WHERE user_id = %s
-        ORDER BY fecha DESC
-    """, (session["user_id"],))
-
-    viajes = cursor.fetchall()
-
-    # cantidad de viajes
-    cantidad_viajes = len(viajes)
-
-    # reservas de los viajes
-    cursor.execute("""
-        SELECT reservas.viaje_id, users.nombre, users.apellido
-        FROM reservas
-        JOIN users ON reservas.user_id = users.id
-    """)
-
-    reservas = cursor.fetchall()
-
-    return render_template(
-        "perfil.html",
-        user=user,
-        viajes=viajes,
-        reservas=reservas,
-        mis_reservas=mis_reservas,
-        cantidad_viajes=cantidad_viajes
-    )
-    
-#CANCELAR VIAJES
-
+# CANCELAR VIAJE
 @app.route("/cancelar_viaje/<int:viaje_id>", methods=["POST"])
 def cancelar_viaje(viaje_id):
-
     if "user_id" not in session:
         return redirect("/login")
 
-    cursor = db.cursor(cursor_factory=RealDictCursor)
+    conn = get_db_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        cursor.execute("SELECT user_id FROM viajes WHERE id = %s", (viaje_id,))
+        viaje = cursor.fetchone()
 
-
-    cursor.execute("""
-        SELECT user_id
-        FROM viajes
-        WHERE id = %s
-    """, (viaje_id,))
-
-    viaje = cursor.fetchone()
-
-    if viaje and viaje["user_id"] == session["user_id"]:
-
-        # borrar reservas primero
-        cursor.execute("DELETE FROM reservas WHERE viaje_id = %s", (viaje_id,))
-
-        # borrar el viaje
-        cursor.execute("DELETE FROM viajes WHERE id = %s", (viaje_id,))
-
-        db.commit()
+        if viaje and viaje["user_id"] == session["user_id"]:
+            cursor.execute("DELETE FROM reservas WHERE viaje_id = %s", (viaje_id,))
+            cursor.execute("DELETE FROM viajes WHERE id = %s", (viaje_id,))
+            conn.commit()
+    finally:
+        cursor.close()
+        conn.close()
 
     return redirect("/perfil")
-
-
 
 if __name__ == "__main__":
     app.run(debug=True)
