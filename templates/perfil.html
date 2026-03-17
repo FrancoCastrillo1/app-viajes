@@ -58,7 +58,7 @@
     <p><strong>Conductor:</strong> {{ reserva.conductor_nombre }} {{ reserva.conductor_apellido }}</p>
 
     <div style="display: flex; gap: 10px; margin-top: 15px;">
-        <a href="https://wa.me/{{ reserva.conductor_telefono }}?text=Hola%20{{ reserva.conductor_nombre }},%20te%20escribo%20por%20el%20viaje%20a%20{{ reserva.destino }}%20desde%20la%20App%20Franco-Viajes" 
+        <a href="https://wa.me/{{ reserva.conductor_telefono }}?text=Hola%20{{ reserva.conductor_nombre }},%20te%20escribo%20por%20el%20viaje%20a%20{{ reserva.destino }}%20desde%20la%20App%20Ruta-Compartida" 
            target="_blank" 
            style="background-color: #25D366; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; display: flex; align-items: center;">
            WhatsApp del Conductor
@@ -76,4 +76,5 @@
 {% endfor %}
 
 {% endblock %}
+
 
