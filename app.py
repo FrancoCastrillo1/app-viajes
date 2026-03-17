@@ -5,8 +5,9 @@ from psycopg2.extras import RealDictCursor
 import os
 from datetime import date
 from email.message import EmailMessage
-import smtplib
+#import smtplib
 #import resend
+import requests
 import random
 
 #resend.api_key = "re_39rnQkqH_NBoNsYkeoferdxo2Lv4dGrKL"
@@ -38,12 +39,14 @@ def register():
         email = request.form["email"]
         password = generate_password_hash(request.form["password"])
         
+        # Generamos el código de 6 dígitos
         codigo = str(random.randint(100000, 999999))
 
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
+        
         try:
-            # Guardamos el usuario con el código
+            # 1. Intentamos insertar en la base de datos
             cursor.execute("""
                 INSERT INTO users (nombre, apellido, telefono, email, password, codigo_verificacion, verificado)
                 VALUES (%s, %s, %s, %s, %s, %s, FALSE)
@@ -53,14 +56,23 @@ def register():
             new_user = cursor.fetchone()
             conn.commit()
 
-            # Mandamos el mail usando la nueva función de Gmail
-            if enviar_mail_verificacion(email, codigo):
-                session["user_id"] = new_user["id"]
-                return redirect("/verificar")
-            else:
-                flash("Error al enviar el mail. Por favor intenta más tarde.")
-                return redirect("/register")
-                
+            # 2. Intentamos mandar el mail (Si falla, solo sale un print en el log)
+            # No usamos "if" aquí para que no trabe la navegación
+            enviar_mail_verificacion(email, codigo)
+
+            # 3. Guardamos sesión y REDIRIGIMOS SÍ O SÍ
+            session["user_id"] = new_user["id"]
+            return redirect("/verificar")
+
+        except psycopg2.errors.UniqueViolation:
+            conn.rollback()
+            flash("Este email ya está registrado. Por favor, inicia sesión.")
+            return redirect("/register")
+        except Exception as e:
+            conn.rollback()
+            print(f"Error inesperado en registro: {e}")
+            flash("Hubo un error al procesar tu registro.")
+            return redirect("/register")
         finally:
             cursor.close()
             conn.close()
@@ -69,26 +81,35 @@ def register():
 
 #ENVIAR MAIL
 def enviar_mail_verificacion(email_destino, codigo):
-    email_emisor = os.environ.get("GMAIL_USER")
-    password_emisor = os.environ.get("GMAIL_PASS")
-
-    msg = EmailMessage()
-    msg.set_content(f"Tu código de verificación para Franco-Viajes es: {codigo}")
-    msg["Subject"] = "Código de Verificación"
-    msg["From"] = f"Franco-Viajes <{email_emisor}>"
-    msg["To"] = email_destino
+    api_key = os.environ.get("RESEND_API_KEY")
+    
+    # IMPORTANTE: En modo prueba de Resend, el 'to' DEBE SER tu mail de registro
+    # Para probar que redirija bien, usá franco.castrillo1@gmail.com
+    
+    url = "https://api.resend.com/emails"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "from": "onboarding@resend.dev",
+        "to": email_destino,
+        "subject": "Tu código de verificación",
+        "html": f"<strong>Tu código es: {codigo}</strong>"
+    }
 
     try:
-        # Usamos SMTP_SSL directamente en el puerto 465
-        # Agregamos timeout para que no se quede cargando infinito
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=10) as smtp:
-            smtp.login(email_emisor, password_emisor)
-            smtp.send_message(msg)
-        print("¡SISTEMA: Mail enviado correctamente!")
-        return True
+        response = requests.post(url, headers=headers, json=data, timeout=10)
+        if response.status_code == 200 or response.status_code == 201:
+            print("¡API RESEND: Mail enviado con éxito!")
+            return True
+        else:
+            print(f"Error API Resend: {response.text}")
+            return False
     except Exception as e:
-        print(f"DEBUG ERROR MAIL: {e}")
+        print(f"Error de conexión: {e}")
         return False
+
 
 
 #vERIFICAR EMAIL
@@ -312,6 +333,9 @@ def cancelar_viaje(viaje_id):
         conn.close()
 
     return redirect("/perfil")
+
+if __name__ == "__main__":
+    app.run(debug=True)
 
 if __name__ == "__main__":
     app.run(debug=True)
