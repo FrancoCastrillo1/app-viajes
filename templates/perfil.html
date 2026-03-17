@@ -4,77 +4,76 @@
 
 <h2>Mi Perfil</h2>
 
-<h3>Datos personales</h3>
+<section class="perfil-info">
+    <h3>Datos personales</h3>
+    <p><strong>Nombre:</strong> {{ user.nombre }} {{ user.apellido }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Teléfono:</strong> {{ user.telefono }}</p>
+</section>
 
-<p><strong>Nombre:</strong> {{ user.nombre }} {{ user.apellido }}</p>
-<p><strong>Email:</strong> {{ user.email }}</p>
-<p><strong>Teléfono:</strong> {{ user.telefono }}</p>
+<section class="estadisticas">
+    <h3>Estadísticas</h3>
+    <p>Viajes publicados: {{ cantidad_viajes }}</p>
+</section>
 
-<h3>Estadísticas</h3>
+<hr>
 
-<p>Viajes publicados: {{ cantidad_viajes }}</p>
-
-
-<h3>Mis viajes</h3>
-
+<h3>Mis viajes publicados</h3>
 {% for viaje in viajes %}
-
 <div class="card">
+    <p><strong>{{ viaje.origen }}</strong> → <strong>{{ viaje.destino }}</strong></p>
+    <p>Fecha: {{ viaje.fecha }} | Hora: {{ viaje.hora }}</p>
+    <p>Precio: ${{ viaje.precio }}</p>
+    <p>Lugares disponibles: {{ viaje.lugares }}</p>
 
-<p><strong>{{ viaje.origen }}</strong> → <strong>{{ viaje.destino }}</strong></p>
+    <h4>Pasajeros confirmados:</h4>
+    <ul>
+    {% for reserva in reservas %}
+        {% if reserva.viaje_id == viaje.id %}
+            <li>{{ reserva.nombre }} {{ reserva.apellido }}</li>
+        {% endif %}
+    {% else %}
+        <li>Aún no hay reservas para este viaje.</li>
+    {% endfor %}
+    </ul>
 
-<p>Fecha: {{ viaje.fecha }} | Hora: {{ viaje.hora }}</p>
-
-<p>Precio: ${{ viaje.precio }}</p>
-
-<p>Lugares disponibles: {{ viaje.lugares }}</p>
-
-<h4>Reservas</h4>
-
-<p><strong>Pasajeros:</strong></p>
-
-<ul>
-{% for reserva in reservas %}
-    {% if reserva.viaje_id == viaje.id %}
-        <li>{{ reserva.nombre }} {{ reserva.apellido }}</li>
-    {% endif %}
-{% endfor %}
-</ul>
-
-<form action="/cancelar_viaje/{{ viaje.id }}" method="POST">
-<button type="submit">Cancelar viaje</button>
-</form>
-
+    <form action="/cancelar_viaje/{{ viaje.id }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar esta publicación?');">
+        <button type="submit" style="background-color: #ff4d4d; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
+            Eliminar Publicación
+        </button>
+    </form>
 </div>
-
 {% else %}
-
-<p>No publicaste viajes todavía.</p>
-
+    <p>No publicaste viajes todavía.</p>
 {% endfor %}
 
-
+<hr>
 
 <h3>Viajes que reservé</h3>
-
 {% for reserva in mis_reservas %}
+<div class="card" style="border-left: 5px solid #3498db; padding: 15px; margin-bottom: 20px; background-color: #f9f9f9;">
+    <p><strong>{{ reserva.origen }}</strong> → <strong>{{ reserva.destino }}</strong></p>
+    <p>Fecha: {{ reserva.fecha }} | Hora: {{ reserva.hora }}</p>
+    <p>Precio: ${{ reserva.precio }}</p>
+    <p><strong>Conductor:</strong> {{ reserva.conductor_nombre }} {{ reserva.conductor_apellido }}</p>
 
-<div class="card">
+    <div style="display: flex; gap: 10px; margin-top: 15px;">
+        <a href="https://wa.me/{{ reserva.conductor_telefono }}?text=Hola%20{{ reserva.conductor_nombre }},%20te%20escribo%20por%20el%20viaje%20a%20{{ reserva.destino }}%20desde%20la%20App%20Franco-Viajes" 
+           target="_blank" 
+           style="background-color: #25D366; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; display: flex; align-items: center;">
+           WhatsApp del Conductor
+        </a>
 
-<p><strong>{{ reserva.origen }}</strong> → <strong>{{ reserva.destino }}</strong></p>
-
-<p>Fecha: {{ reserva.fecha }} | Hora: {{ reserva.hora }}</p>
-
-<p>Precio: ${{ reserva.precio }}</p>
-
-<p><strong>Conductor:</strong> {{ reserva.conductor_nombre }} {{ reserva.conductor_apellido }}</p>
-
+        <form action="/cancelar_reserva/{{ reserva.reserva_id }}" method="POST" onsubmit="return confirm('¿Estás seguro de que quieres cancelar tu lugar en este viaje?');">
+            <button type="submit" style="background-color: #e74c3c; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                Cancelar mi lugar
+            </button>
+        </form>
+    </div>
 </div>
-
 {% else %}
-
-<p>No reservaste viajes todavía.</p>
-
+    <p>No reservaste viajes todavía.</p>
 {% endfor %}
 
 {% endblock %}
+
