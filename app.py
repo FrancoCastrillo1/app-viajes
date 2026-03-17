@@ -280,9 +280,14 @@ def perfil():
         cursor.execute("SELECT nombre, apellido, telefono, email FROM users WHERE id = %s", (session["user_id"],))
         user = cursor.fetchone()
 
-        # Reservas que hizo el usuario
+        # --- MODIFICADO: Reservas que hizo el usuario (incluimos ID de reserva y Teléfono) ---
         cursor.execute("""
-            SELECT viajes.*, conductor.nombre AS conductor_nombre, conductor.apellido AS conductor_apellido
+            SELECT 
+                viajes.*, 
+                reservas.id AS reserva_id,
+                conductor.nombre AS conductor_nombre, 
+                conductor.apellido AS conductor_apellido,
+                conductor.telefono AS conductor_telefono
             FROM reservas
             JOIN viajes ON reservas.viaje_id = viajes.id
             JOIN users AS conductor ON viajes.user_id = conductor.id
@@ -311,7 +316,8 @@ def perfil():
     finally:
         cursor.close()
         conn.close()
-
+        
+        
 # CANCELAR VIAJE
 @app.route("/cancelar_viaje/<int:viaje_id>", methods=["POST"])
 def cancelar_viaje(viaje_id):
@@ -334,8 +340,27 @@ def cancelar_viaje(viaje_id):
 
     return redirect("/perfil")
 
-if __name__ == "__main__":
-    app.run(debug=True)
+#CANCELAR RESERVA
+@app.route("/cancelar_reserva/<int:reserva_id>", methods=["POST"])
+def cancelar_reserva(reserva_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        # Borramos la reserva (solo si pertenece al usuario logueado por seguridad)
+        cursor.execute("DELETE FROM reservas WHERE id = %s AND user_id = %s", 
+                       (reserva_id, session["user_id"]))
+        conn.commit()
+        flash("Reserva cancelada con éxito.")
+    except Exception as e:
+        print(f"Error al cancelar: {e}")
+        flash("No se pudo cancelar la reserva.")
+    finally:
+        conn.close()
+    
+    return redirect("/perfil")
 
 if __name__ == "__main__":
     app.run(debug=True)
