@@ -73,19 +73,22 @@ def enviar_mail_verificacion(email_destino, codigo):
     password_emisor = os.environ.get("GMAIL_PASS")
 
     msg = EmailMessage()
-    msg.set_content(f"¡Hola! Tu código de verificación para entrar a Franco-Viajes es: {codigo}")
+    msg.set_content(f"¡Hola! Tu código de verificación es: {codigo}")
     msg["Subject"] = "Código de Verificación - Franco-Viajes"
     msg["From"] = f"Franco-Viajes <{email_emisor}>"
     msg["To"] = email_destino
 
     try:
-        # Conexión al servidor SMTP de Gmail
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+        # CAMBIO AQUÍ: Usamos SMTP normal y luego activamos TLS
+        # Puerto 587 en lugar de 465
+        with smtplib.SMTP("smtp.gmail.com", 587, timeout=15) as smtp: 
+            smtp.starttls() # Esto activa la seguridad
             smtp.login(email_emisor, password_emisor)
             smtp.send_message(msg)
+        print("¡MAIL ENVIADO CON ÉXITO!")
         return True
     except Exception as e:
-        print(f"Error enviando email: {e}")
+        print(f"ERROR AL ENVIAR MAIL: {e}")
         return False
 
 
