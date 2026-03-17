@@ -1,118 +1,126 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #FAF3E0;
-    margin: 0;
-    color: #333333;
+/* Importamos una fuente más moderna de Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+:root {
+    --primary: #E76F51;
+    --secondary: #F4A261;
+    --bg: #FAF3E0;
+    --text: #2D3436;
+    --white: #ffffff;
+    --shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    --transition: all 0.3s ease;
 }
 
-/* NAV */
+body {
+    font-family: 'Inter', sans-serif; /* Cambio a fuente más limpia */
+    background-color: var(--bg);
+    margin: 0;
+    color: var(--text);
+    line-height: 1.6;
+}
 
+/* NAV - Más limpio y con elevación */
 nav {
-    background-color: #E76F51;
-    padding: 15px;
+    background-color: var(--primary);
+    padding: 1rem 5%;
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    justify-content: space-between; /* Logo a un lado, links al otro */
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 nav a {
     color: white;
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 600;
+    padding: 8px 15px;
+    border-radius: 8px;
+    transition: var(--transition);
 }
 
 nav a:hover {
-    opacity: 0.8;
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
 }
 
 /* CONTENEDOR */
-
 .container {
-    max-width: 800px;
+    max-width: 900px;
     width: 90%;
-    margin: auto;
-    margin-top: 40px;
+    margin: 40px auto;
 }
 
-/* CARDS */
-
+/* CARDS - Bordes más suaves y efecto hover */
 .card {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-left: 6px solid #E76F51;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    background: var(--white);
+    border-radius: 16px; /* Más redondeado = más moderno */
+    padding: 25px;
+    margin-bottom: 25px;
+    border-left: 8px solid var(--primary);
+    box-shadow: var(--shadow);
+    transition: var(--transition);
 }
 
-/* BOTONES */
+.card:hover {
+    transform: translateY(-4px); /* Se levanta un poquito al pasar el mouse */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
 
-button {
-    background-color: #F4A261;
+/* BOTONES - Con gradiente y efecto de presión */
+button, .btn {
+    background: linear-gradient(135deg, var(--secondary), var(--primary));
     color: white;
     border: none;
-    padding: 10px 16px;
-    border-radius: 6px;
+    padding: 12px 24px;
+    border-radius: 10px;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    box-shadow: 0 4px 15px rgba(231, 111, 81, 0.3);
 }
 
 button:hover {
-    background-color: #E76F51;
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(231, 111, 81, 0.4);
 }
 
-/* INPUTS */
+button:active {
+    transform: scale(0.98);
+}
 
+/* INPUTS - Foco más claro */
 input {
-    padding: 10px;
-    margin-bottom: 12px;
+    padding: 12px 16px;
+    margin-bottom: 15px;
     width: 100%;
-    border-radius: 6px;
-    border: 1px solid #ddd;
+    box-sizing: border-box; /* Evita que el input se salga del contenedor */
+    border-radius: 10px;
+    border: 2px solid #eee;
+    background: #fdfdfd;
+    transition: var(--transition);
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--secondary);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(244, 162, 97, 0.1);
 }
 
 /* TITULOS */
-
 h1, h2, h3 {
-    color: #E76F51;
+    color: var(--primary);
+    margin-top: 0;
 }
-
 
 /* 📱 RESPONSIVE */
-
-/* tablets */
 @media (max-width: 768px) {
-
-    .container {
-        width: 95%;
-        margin-top: 25px;
-    }
-
-    nav {
-        justify-content: center;
-    }
-
-}
-
-/* celulares */
-@media (max-width: 480px) {
-
     nav {
         flex-direction: column;
-        align-items: center;
-        text-align: center;
+        gap: 15px;
     }
-
-    nav a {
-        margin: 5px 0;
-    }
-
-    .card {
-        padding: 15px;
-    }
-
-    button {
-        width: 100%;
-    }
-
 }
