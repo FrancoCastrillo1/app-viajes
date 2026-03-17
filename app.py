@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask import flash
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from psycopg2 import sql
 import os
 
 from datetime import date
@@ -78,7 +79,10 @@ def login():
 
         if user and check_password_hash(user["password"], password):
             session["user_id"] = user["id"]
-            return redirect("/viajes")  
+            return redirect("/viajes")
+        else:
+            flash("Email o contraseña incorrectos")
+            return render_template("login.html")
 
     return render_template("login.html")
 
@@ -95,6 +99,10 @@ def logout():
 
 @app.route("/crear_viaje", methods=["GET", "POST"])
 def crear_viaje():
+    
+    if "user_id" not in session:
+        return redirect("/login")
+    
     fecha_hoy = date.today().isoformat()
     if request.method == "POST":
         origen = request.form["origen"]
@@ -134,7 +142,7 @@ def viajes():
         FROM viajes
         JOIN users ON viajes.user_id = users.id
         WHERE viajes.lugares > 0
-        AND CONCAT(viajes.fecha, ' ', viajes.hora) > NOW()
+        AND (viajes.fecha + viajes.hora) > NOW()
         ORDER BY viajes.fecha, viajes.hora
     """)
 
@@ -172,8 +180,14 @@ def reservar(viaje_id):
     cursor.execute("""
         UPDATE viajes
         SET lugares = lugares - 1
-        WHERE id = %s
+        WHERE id = %s AND lugares > 0
     """, (viaje_id,))
+    
+    cursor.execute("SELECT user_id FROM viajes WHERE id = %s", (viaje_id,))
+    viaje = cursor.fetchone()
+
+    if viaje["user_id"] == session["user_id"]:
+        return redirect("/viajes")
 
     db.commit()
 
