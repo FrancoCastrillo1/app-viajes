@@ -4,6 +4,10 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 import os
 from datetime import date
+import resend
+import random
+
+resend.api_key = "re_39rnQkqH_NBoNsYkeoferdxo2Lv4dGrKL"
 
 app = Flask(__name__)
 app.secret_key = "clave_secreta"
@@ -29,26 +33,74 @@ def register():
         telefono = request.form["telefono"]
         email = request.form["email"]
         password = generate_password_hash(request.form["password"])
+        
+        # Generar código de 6 dígitos para el mail
+        codigo = str(random.randint(100000, 999999))
 
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
-            cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
-            if cursor.fetchone():
-                flash("ERROR: Este email ya está registrado.")
-                return render_template("register.html")
-            
+            # Guardamos al usuario como NO verificado todavía
             cursor.execute("""
-                INSERT INTO users (nombre, apellido, telefono, email, password)
-                VALUES (%s, %s, %s, %s, %s)
-            """, (nombre, apellido, telefono, email, password))
+                INSERT INTO users (nombre, apellido, telefono, email, password, codigo_verificacion, verificado)
+                VALUES (%s, %s, %s, %s, %s, %s, FALSE)
+                RETURNING id
+            """, (nombre, apellido, telefono, email, password, codigo))
+            
+            new_user = cursor.fetchone()
             conn.commit()
-            return redirect("/login")
+
+            # ENVIAR EL MAIL REAL
+            resend.Emails.send({
+                "from": "App Viajes <onboarding@resend.dev>", # Cuando tengas dominio propio, lo cambias aquí
+                "to": [email],
+                "subject": "Tu código de verificación - Franco Viajes",
+                "html": f"""
+                    <h1>¡Hola {nombre}!</h1>
+                    <p>Gracias por sumarte. Tu código de verificación es:</p>
+                    <h2 style="color: #E76F51; font-size: 32px;">{codigo}</h2>
+                    <p>Ingrésalo en la app para activar tu cuenta.</p>
+                """
+            })
+
+            session["user_id"] = new_user["id"]
+            return redirect("/verificar")
         finally:
             cursor.close()
             conn.close()
 
     return render_template("register.html")
+
+#vERIFICAR EMAIL
+
+@app.route("/verificar", methods=["GET", "POST"])
+def verificar():
+    if "user_id" not in session:
+        return redirect("/login")
+
+    if request.method == "POST":
+        codigo_ingresado = request.form["codigo"]
+
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        try:
+            cursor.execute("SELECT codigo_verificacion FROM users WHERE id = %s", (session["user_id"],))
+            user = cursor.fetchone()
+
+            if user and user["codigo_verificacion"] == codigo_ingresado:
+                # Si coincide, actualizamos a TRUE
+                cursor.execute("UPDATE users SET verificado = TRUE WHERE id = %s", (session["user_id"],))
+                conn.commit()
+                flash("¡Cuenta verificada! Ya puedes viajar.")
+                return redirect("/viajes")
+            else:
+                flash("El código es incorrecto. Revisa tu email.")
+        finally:
+            cursor.close()
+            conn.close()
+
+    return render_template("verificar.html")
+
 
 # LOGIN
 @app.route("/login", methods=["GET", "POST"])
@@ -86,6 +138,18 @@ def logout():
 def crear_viaje():
     if "user_id" not in session:
         return redirect("/login")
+    
+    # Dentro de @app.route("/crear_viaje")
+    conn = get_db_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    cursor.execute("SELECT verificado FROM users WHERE id = %s", (session["user_id"],))
+    user_status = cursor.fetchone()
+    conn.close()
+
+    if not user_status or not user_status['verificado']:
+        flash("Debes verificar tu cuenta antes de publicar un viaje.")
+        return redirect("/verificar")
+
     
     fecha_hoy = date.today().isoformat()
     if request.method == "POST":
