@@ -4,15 +4,17 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 import os
 from datetime import date
-import resend
+from email.message import EmailMessage
+import smtplib
+#import resend
 import random
 
-resend.api_key = "re_39rnQkqH_NBoNsYkeoferdxo2Lv4dGrKL"
+#resend.api_key = "re_39rnQkqH_NBoNsYkeoferdxo2Lv4dGrKL"
 
 app = Flask(__name__)
 app.secret_key = "clave_secreta"
 
-resend.api_key = os.environ.get("RESEND_API_KEY")
+#resend.api_key = os.environ.get("RESEND_API_KEY")
 
 # FUNCIÓN DE CONEXIÓN (La clave para que no falle)
 def get_db_connection():
@@ -36,13 +38,12 @@ def register():
         email = request.form["email"]
         password = generate_password_hash(request.form["password"])
         
-        # Generar código de 6 dígitos para el mail
         codigo = str(random.randint(100000, 999999))
 
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
-            # Guardamos al usuario como NO verificado todavía
+            # Guardamos el usuario con el código
             cursor.execute("""
                 INSERT INTO users (nombre, apellido, telefono, email, password, codigo_verificacion, verificado)
                 VALUES (%s, %s, %s, %s, %s, %s, FALSE)
@@ -52,26 +53,42 @@ def register():
             new_user = cursor.fetchone()
             conn.commit()
 
-            # ENVIAR EL MAIL REAL
-            resend.Emails.send({
-                "from": "App Viajes <onboarding@resend.dev>", # Cuando tengas dominio propio, lo cambias aquí
-                "to": [email],
-                "subject": "Tu código de verificación - Franco Viajes",
-                "html": f"""
-                    <h1>¡Hola {nombre}!</h1>
-                    <p>Gracias por sumarte. Tu código de verificación es:</p>
-                    <h2 style="color: #E76F51; font-size: 32px;">{codigo}</h2>
-                    <p>Ingrésalo en la app para activar tu cuenta.</p>
-                """
-            })
-
-            session["user_id"] = new_user["id"]
-            return redirect("/verificar")
+            # Mandamos el mail usando la nueva función de Gmail
+            if enviar_mail_verificacion(email, codigo):
+                session["user_id"] = new_user["id"]
+                return redirect("/verificar")
+            else:
+                flash("Error al enviar el mail. Por favor intenta más tarde.")
+                return redirect("/register")
+                
         finally:
             cursor.close()
             conn.close()
 
     return render_template("register.html")
+
+#ENVIAR MAIL
+def enviar_mail_verificacion(email_destino, codigo):
+    email_emisor = os.environ.get("GMAIL_USER")
+    password_emisor = os.environ.get("GMAIL_PASS")
+
+    msg = EmailMessage()
+    msg.set_content(f"¡Hola! Tu código de verificación para entrar a Franco-Viajes es: {codigo}")
+    msg["Subject"] = "Código de Verificación - Franco-Viajes"
+    msg["From"] = f"Franco-Viajes <{email_emisor}>"
+    msg["To"] = email_destino
+
+    try:
+        # Conexión al servidor SMTP de Gmail
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+            smtp.login(email_emisor, password_emisor)
+            smtp.send_message(msg)
+        return True
+    except Exception as e:
+        print(f"Error enviando email: {e}")
+        return False
+
+
 
 #vERIFICAR EMAIL
 
@@ -90,13 +107,12 @@ def verificar():
             user = cursor.fetchone()
 
             if user and user["codigo_verificacion"] == codigo_ingresado:
-                # Si coincide, actualizamos a TRUE
                 cursor.execute("UPDATE users SET verificado = TRUE WHERE id = %s", (session["user_id"],))
                 conn.commit()
-                flash("¡Cuenta verificada! Ya puedes viajar.")
+                flash("¡Cuenta verificada con éxito!")
                 return redirect("/viajes")
             else:
-                flash("El código es incorrecto. Revisa tu email.")
+                flash("Código incorrecto.")
         finally:
             cursor.close()
             conn.close()
