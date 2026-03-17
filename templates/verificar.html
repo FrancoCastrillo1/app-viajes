@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="card" style="max-width: 450px; margin: 60px auto; text-align: center;">
+        <h2 style="margin-bottom: 10px;">Confirma tu identidad</h2>
+        <p style="color: #666; margin-bottom: 30px;">
+            Te enviamos un código de verificación a tu correo. Por favor, ingrésalo para continuar.
+        </p>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <p style="color: #e74c3c; font-weight: bold; margin-bottom: 15px;">{{ message }}</p>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form action="/verificar" method="POST">
+            <input type="text" name="codigo" placeholder="Ej: 123456" required 
+                   style="font-size: 28px; text-align: center; letter-spacing: 8px; border: 2px solid #E76F51;">
+            
+            <button type="submit" style="width: 100%; height: 50px; font-size: 18px; margin-top: 15px;">
+                Activar mi cuenta
+            </button>
+        </form>
+        
+        <p style="margin-top: 25px; font-size: 14px;">
+            ¿No recibiste nada? Revisa tu carpeta de <b>SPAM</b>.
+        </p>
+    </div>
+</div>
+{% endblock %}
