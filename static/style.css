@@ -124,3 +124,92 @@ h1, h2, h3 {
         gap: 15px;
     }
 }
+
+/* Sidebar */
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 2000;
+    top: 0;
+    left: 0;
+    background-color: #FFF7ED; /* Crema cálido */
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+
+.sidebar a {
+    padding: 15px 32px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #431407;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #FFEDD5;
+    color: var(--primary);
+}
+
+.sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+/* Navbar Pro */
+.navbar-pro {
+    background-color: #FFEDD5;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 5%;
+    align-items: center;
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+/* Estilos del Filtro en el Index */
+.search-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin-top: -50px; /* Sube la caja sobre el hero */
+}
+
+.search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.input-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #431407;
+}
+
+.btn-search {
+    background: #F97316 !important; /* Naranja cálido */
+    font-size: 1.1rem;
+    padding: 15px;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, #FDE68A, #F97316);
+    padding: 80px 20px;
+    text-align: center;
+    border-radius: 0 0 40px 40px;
+    color: #431407;
+}
