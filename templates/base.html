@@ -9,28 +9,55 @@
 </head>
 
 <body>
-
-    <nav>
-
-        <a href="/">Inicio</a>
-        <a href="/viajes">Ver viajes</a>
-
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <div class="sidebar-header">
+            <h3>Ruta Compartida</h3>
+        </div>
+        
         {% if session.user_id %}
-        <a href="/crear_viaje">Publicar viaje</a>
-        <a href="/perfil">Mi perfil</a>
-        <a href="/logout">Cerrar sesión</a>
+            <a href="/perfil">👤 Mi Perfil</a>
+            <a href="/crear_viaje">🚗 Publicar viaje</a>
+            <a href="/viajes">🔍 Ver todos los viajes</a>
+            <hr>
+            <a href="/logout">🚪 Cerrar sesión</a>
         {% else %}
-        <a href="/login">Login</a>
-        <a href="/register">Registrarse</a>
+            <a href="/login">🔑 Login</a>
+            <a href="/register">📝 Registrarse</a>
         {% endif %}
+    </div>
 
+    <nav class="navbar-pro">
+        <div class="nav-left">
+            <button class="openbtn" onclick="openNav()">☰</button>
+        </div>
+        
+        <div class="nav-center">
+            <a href="/" class="logo-text">Ruta Compartida</a>
+        </div>
+
+        <div class="nav-right">
+            {% if not session.user_id %}
+                <a href="/login" class="nav-link-auth">Login</a>
+                <a href="/register" class="nav-link-auth btn-reg">Registro</a>
+            {% else %}
+                <span class="welcome-msg">Hola!</span>
+            {% endif %}
+        </div>
     </nav>
 
-
-    <div class="container">
+    <div id="main" class="container">
         {% block content %}{% endblock %}
     </div>
 
+    <script>
+        function openNav() {
+            document.getElementById("mySidebar").style.width = "250px";
+        }
+        function closeNav() {
+            document.getElementById("mySidebar").style.width = "0";
+        }
+    </script>
 </body>
 
 </html>
