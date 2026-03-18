@@ -1,5 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Bienvenido a la App de Viajes</h1>
+<div class="hero-section">
+    <h1>¿A dónde querés viajar hoy?</h1>
+    <p>Encontrá personas que hacen tu misma ruta y compartí gastos.</p>
+</div>
+
+<div class="search-card">
+    <form action="/buscar" method="GET" class="search-form">
+        <div class="input-group">
+            <label>Origen</label>
+            <input type="text" name="origen" placeholder="Ej: Córdoba" required>
+        </div>
+        <div class="input-group">
+            <label>Destino</label>
+            <input type="text" name="destino" placeholder="Ej: Alta Gracia" required>
+        </div>
+        <div class="input-group">
+            <label>Fecha</label>
+            <input type="date" name="fecha">
+        </div>
+        <button type="submit" class="btn-search">Buscar Viajes</button>
+    </form>
+</div>
 {% endblock %}
