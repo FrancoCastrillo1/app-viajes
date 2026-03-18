@@ -18,12 +18,12 @@
         {% if session.user_id %}
             <a href="/perfil">👤 Mi Perfil</a>
             <a href="/crear_viaje">🚗 Publicar viaje</a>
-            <a href="/viajes">🔍 Ver todos los viajes</a>
             <hr>
             <a href="/logout">🚪 Cerrar sesión</a>
         {% else %}
             <a href="/login">🔑 Login</a>
             <a href="/register">📝 Registrarse</a>
+            <a href="/viajes">🔍 Ver todos los viajes</a>
         {% endif %}
     </div>
 
