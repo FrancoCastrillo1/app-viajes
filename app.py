@@ -362,5 +362,43 @@ def cancelar_reserva(reserva_id):
     
     return redirect("/perfil")
 
+@app.route("/buscar")
+def buscar():
+    origen = request.args.get("origen", "")
+    destino = request.args.get("destino", "")
+    fecha = request.args.get("fecha", "")
+
+    conn = get_db_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        query = """
+            SELECT viajes.*, users.nombre, users.apellido, users.telefono 
+            FROM viajes 
+            JOIN users ON viajes.user_id = users.id 
+            WHERE 1=1
+        """
+        params = []
+
+        if origen:
+            query += " AND viajes.origen ILIKE %s"
+            params.append(f"%{origen}%")
+        if destino:
+            query += " AND viajes.destino ILIKE %s"
+            params.append(f"%{destino}%")
+        if fecha:
+            query += " AND viajes.fecha = %s"
+            params.append(fecha)
+
+        query += " AND viajes.lugares > 0 ORDER BY viajes.fecha ASC"
+        
+        cursor.execute(query, params)
+        resultados = cursor.fetchall()
+        
+        # Reutilizamos viajes.html para mostrar los resultados
+        return render_template("viajes.html", viajes=resultados, busqueda=True)
+    finally:
+        cursor.close()
+        conn.close()
+
 if __name__ == "__main__":
     app.run(debug=True)
