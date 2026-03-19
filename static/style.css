@@ -286,3 +286,25 @@ h1, h2, h3 {
     border-radius: 0 0 40px 40px;
     color: #431407;
 }
+
+.alert {
+    background-color: #FDE68A; /* Amarillo cálido */
+    color: #92400E; /* Marrón oscuro */
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid #F59E0B;
+}
+
+select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 2px solid #FFEDD5;
+    background-color: white;
+    margin-bottom: 15px;
+    font-family: inherit;
+    font-size: 1rem;
+}
