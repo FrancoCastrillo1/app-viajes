@@ -4,32 +4,54 @@
 <h2>Viajes disponibles</h2>
 
 {% for viaje in viajes %}
-<div class="card">
+    <div class="card" style="border-left: 8px solid var(--secondary);">
 
-<p><strong>{{ viaje.origen }}</strong> → <strong>{{ viaje.destino }}</strong></p>
+        <p style="font-size: 1.2rem; color: var(--primary);">
+            <strong>{{ viaje.origen }}</strong> ➔ <strong>{{ viaje.destino }}</strong>
+        </p>
 
-<p><b>Fecha: {{ viaje.fecha }} | Hora: {{ viaje.hora }}</b></p>
+        <p><b>📅 Fecha:</b> {{ viaje.fecha }} | <b>⏰ Hora:</b> {{ viaje.hora }}</p>
 
-<p><b>Precio:</b> ${{ viaje.precio }}</p>
+        <p><b>💰 Precio:</b> ${{ viaje.precio }}</p>
 
-<p><b>Lugares disponibles:</b> {{ viaje.lugares }}</p>
+        <p><b>💺 Lugares disponibles:</b> 
+            {% if viaje.lugares > 0 %}
+                <span style="color: #2D3436; font-weight: bold;">{{ viaje.lugares }}</span>
+            {% else %}
+                <span style="color: #e74c3c; font-weight: bold;">AGOTADO</span>
+            {% endif %}
+        </p>
 
-<p><b>Lugar de Encuentro para la salida:</b> {{ viaje.encuentro }}</p>
+        <p><b>📍 Encuentro:</b> {{ viaje.encuentro }}</p>
 
-<p><strong><b>Conductor:</b></strong> {{ viaje.nombre }} {{ viaje.apellido }}</p>
+        <hr style="border: 0.5px solid #eee; margin: 15px 0;">
 
-<p><strong><b>Teléfono: </b></strong> {{ viaje.telefono }}</p>
+        <p><strong>👤 Conductor:</strong> {{ viaje.nombre }} {{ viaje.apellido }}</p>
 
-{% if viaje.lugares > 0 %}
-<form action="/reservar/{{ viaje.id }}" method="POST">
-    <button>Reservar</button>
-</form>
+        <p><strong>📞 Teléfono:</strong> {{ viaje.telefono }}</p>
+
+        {% if viaje.lugares > 0 %}
+            <form action="/reservar/{{ viaje.id }}" method="POST" onsubmit="return confirm('¿Confirmas la reserva para este viaje?');">
+                <button type="submit" style="width: 100%; margin-top: 10px;">Reservar Lugar</button>
+            </form>
+        {% else %}
+            <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center; color: #666;">
+                🚫 No hay asientos disponibles
+            </div>
+        {% endif %}
+
+    </div>
 {% else %}
-<p>No hay asientos disponibles</p>
-{% endif %}
-
-
-</div>
+    <div class="card" style="text-align: center; border-left: 8px solid #ccc; padding: 40px 20px;">
+        <p style="font-size: 1.3rem; color: #666; margin-bottom: 20px;">
+            🔍 No hay viajes disponibles para esa ruta o fecha.
+        </p>
+        <p style="color: #888;">Intentá con otras ciudades o probando una fecha diferente.</p>
+        <br>
+        <a href="/" class="nav-link-auth btn-border" style="display: inline-block; padding: 10px 20px;">
+            Volver a buscar
+        </a>
+    </div>
 {% endfor %}
 
 {% endblock %}
