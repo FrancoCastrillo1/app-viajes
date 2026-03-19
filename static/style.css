@@ -163,12 +163,85 @@ h1, h2, h3 {
 }
 
 /* Navbar Pro */
+/* --- NUEVO NAVBAR PRO --- */
 .navbar-pro {
-    background-color: #FFEDD5;
+    background-color: #FFEDD5; /* Fondo crema cálido */
     display: flex;
-    justify-content: space-between;
-    padding: 15px 5%;
-    align-items: center;
+    flex-direction: column; /* Apila fila 1 sobre fila 2 */
+    padding: 10px 0; /* Un poco de aire arriba y abajo */
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* Sombra suave */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Fila Superior: Solo el Título */
+.nav-top {
+    text-align: center; /* Centra el texto */
+    padding-bottom: 8px; /* Separa de la fila de abajo */
+    width: 100%;
+}
+
+.logo-text {
+    font-size: 1.4rem; /* Tamaño del título */
+    letter-spacing: 1.5px; /* Espaciado entre letras */
+    font-weight: 800; /* Negrita fuerte */
+    color: #E76F51; /* Color terracota terracota terracota terracota terracota terracota terracota terracota terracota */
+    text-decoration: none;
+    text-transform: uppercase; /* Todo en mayúsculas */
+}
+
+/* Fila Inferior: Menú y Botones */
+.nav-bottom {
+    display: flex;
+    justify-content: space-between; /* ¡Clave! Separa izquierda de derecha */
+    align-items: center; /* Alinea verticalmente */
+    padding: 0 15px; /* Aire a los costados */
+    width: 100%;
+    box-sizing: border-box; /* Asegura que el padding no rompa el ancho */
+}
+
+/* Botones de Login y Register */
+.nav-right {
+    display: flex; /* Alinea Login y Registro uno al lado del otro */
+    gap: 5px; /* Separa un poquito los dos botones */
+}
+
+.nav-link-auth {
+    text-decoration: none;
+    color: #E76F51;
+    font-weight: 600;
+    padding: 5px 12px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+/* El botón con borde terracota terracota terracota terracota terracota terracota terracota terracota */
+.btn-border {
+    border: 2px solid #E76F51;
+    border-radius: 8px;
+}
+
+.btn-border:hover {
+    background-color: #E76F51;
+    color: white;
+}
+
+/* El botón naranja del menú hamburguesa */
+.openbtn {
+    background-color: #F4A261; /* Naranja suave */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: background 0.3s ease;
+}
+
+.openbtn:hover {
+    background-color: #E76F51; /* Cambia a terracota terracota terracota terracota terracota al pasar el mouse */
 }
 
 .logo-text {
