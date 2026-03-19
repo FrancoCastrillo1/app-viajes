@@ -265,6 +265,11 @@ def reservar(viaje_id):
         cursor.close()
         conn.close()
 
+    try:
+        # Si todo sale bien:
+        flash("¡Viaje reservado exitosamente!")
+    except:
+        flash("No se pudo reservar el viaje. Intentá de nuevo.")
     return redirect("/viajes")
 
 # PERFIL
@@ -359,7 +364,7 @@ def cancelar_reserva(reserva_id):
         flash("No se pudo cancelar la reserva.")
     finally:
         conn.close()
-    
+    flash("Reserva cancelada correctamente.")
     return redirect("/perfil")
 
 @app.route("/buscar")
