@@ -10,22 +10,18 @@
 
 <body>
     <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <div class="sidebar-header">
-            <h3>Ruta Compartida</h3>
-        </div>
-        
-        {% if session.user_id %}
-            <a href="/perfil">👤 Mi Perfil</a>
-            <a href="/crear_viaje">🚗 Publicar viaje</a>
-            <hr>
-            <a href="/logout">🚪 Cerrar sesión</a>
-        {% else %}
-            <a href="/login">🔑 Login</a>
-            <a href="/register">📝 Registrarse</a>
-            <a href="/viajes">🔍 Ver todos los viajes</a>
-        {% endif %}
-    </div>
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    
+    <a href="/">🏠 Inicio / Buscar</a> {% if session.user_id %}
+        <a href="/perfil">👤 Mi Perfil / Mis Viajes</a> <a href="/crear_viaje">🚗 Publicar viaje</a>
+        <a href="/viajes">🔍 Ver todos los viajes</a>
+        <hr>
+        <a href="/logout">🚪 Cerrar sesión</a>
+    {% else %}
+        <a href="/login">🔑 Ingresar</a>
+        <a href="/register">📝 Registrarse</a>
+    {% endif %}
+</div>
 
     <nav class="navbar-pro">
         <div class="nav-top">
@@ -47,7 +43,19 @@
         </div>
     </nav>
 
+
+    
     <div id="main" class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert shadow">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
         {% block content %}{% endblock %}
     </div>
 
