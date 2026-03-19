@@ -18,7 +18,6 @@
         {% if session.user_id %}
             <a href="/perfil">👤 Mi Perfil</a>
             <a href="/crear_viaje">🚗 Publicar viaje</a>
-            <a href="/viajes">🔍 Ver todos los viajes</a>
             <hr>
             <a href="/logout">🚪 Cerrar sesión</a>
         {% else %}
@@ -29,21 +28,22 @@
     </div>
 
     <nav class="navbar-pro">
-        <div class="nav-left">
-            <button class="openbtn" onclick="openNav()">☰</button>
+        <div class="nav-top">
+            <a href="/" class="logo-text">RUTA COMPARTIDA</a>
         </div>
         
-        <div class="nav-center">
-            <a href="/" class="logo-text">Ruta Compartida</a>
-        </div>
-
-        <div class="nav-right">
-            {% if not session.user_id %}
-                <a href="/login" class="nav-link-auth">Login</a>
-                <a href="/register" class="nav-link-auth btn-reg">Registro</a>
-            {% else %}
-                <span class="welcome-msg">Hola!</span>
-            {% endif %}
+        <div class="nav-bottom">
+            <div class="nav-left">
+                <button class="openbtn" onclick="openNav()">☰</button>
+            </div>
+            <div class="nav-right">
+                {% if not session.user_id %}
+                    <a href="/login" class="nav-link-auth">Login</a>
+                    <a href="/register" class="nav-link-auth btn-border">Register</a>
+                {% else %}
+                    <span class="welcome-msg">¡Hola, {{ session.user_name }}!</span>
+                {% endif %}
+            </div>
         </div>
     </nav>
 
