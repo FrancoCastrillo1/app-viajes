@@ -9,7 +9,7 @@ from email.message import EmailMessage
 #import resend
 import requests
 import random
-#holanda
+
 #resend.api_key = "re_39rnQkqH_NBoNsYkeoferdxo2Lv4dGrKL"
 
 app = Flask(__name__)
@@ -83,31 +83,42 @@ def register():
 def enviar_mail_verificacion(email_destino, codigo):
     api_key = os.environ.get("RESEND_API_KEY")
     
-    # IMPORTANTE: En modo prueba de Resend, el 'to' DEBE SER tu mail de registro
-    # Para probar que redirija bien, usá franco.castrillo1@gmail.com
-    
     url = "https://api.resend.com/emails"
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
+    
+    # CAMBIO CLAVE AQUÍ: Usamos tu dominio verificado
     data = {
-        "from": "onboarding@resend.dev",
+        "from": "Ruta Compartida <verificacion@rutacompartida.com.ar>",
         "to": email_destino,
-        "subject": "Tu código de verificación",
-        "html": f"<strong>Tu código es: {codigo}</strong>"
+        "subject": "Tu código de verificación - Ruta Compartida",
+        "html": f"""
+        <div style="font-family: sans-serif; text-align: center; border: 2px solid #E76F51; padding: 20px; border-radius: 15px; max-width: 400px; margin: auto;">
+            <h2 style="color: #E76F51; margin-bottom: 10px;">¡Hola! 👋</h2>
+            <p style="font-size: 1.1rem; color: #333;">Tu código de seguridad para activar tu cuenta en <strong>Ruta Compartida</strong> es:</p>
+            <div style="background-color: #FFEDD5; color: #E76F51; padding: 15px; font-size: 2rem; font-weight: bold; border-radius: 10px; margin: 20px 0; letter-spacing: 5px;">
+                {codigo}
+            </div>
+            <p style="color: #666; font-size: 0.9rem;">Si no solicitaste este código, podés ignorar este mensaje.</p>
+            <hr style="border: 0.5px solid #eee; margin: 20px 0;">
+            <p style="font-size: 0.8rem; color: #999;">© 2026 Ruta Compartida - Viajes Seguros</p>
+        </div>
+        """
     }
 
     try:
-        response = requests.post(url, headers=headers, json=data, timeout=10)
-        if response.status_code == 200 or response.status_code == 201:
-            print("¡API RESEND: Mail enviado con éxito!")
+        # Aumentamos un poquito el timeout por si la API de Resend tarda en responder desde Brasil
+        response = requests.post(url, headers=headers, json=data, timeout=15)
+        if response.status_code in [200, 201]:
+            print(f"¡API RESEND: Mail enviado con éxito a {email_destino}!")
             return True
         else:
-            print(f"Error API Resend: {response.text}")
+            print(f"Error API Resend: {response.status_code} - {response.text}")
             return False
     except Exception as e:
-        print(f"Error de conexión: {e}")
+        print(f"Error de conexión con Resend: {e}")
         return False
 
 
