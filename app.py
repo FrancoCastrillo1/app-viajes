@@ -258,11 +258,11 @@ def reservar(viaje_id):
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     
     try:
-        # 1. Traer datos del viaje, del conductor y del pasajero
+        # Usamos 'users' como dice tu tabla de Supabase
         cursor.execute("""
             SELECT v.*, u.email as conductor_email, u.nombre as conductor_nombre 
             FROM viajes v 
-            JOIN usuarios u ON v.user_id = u.id 
+            JOIN users u ON v.user_id = u.id 
             WHERE v.id = %s
         """, (viaje_id,))
         viaje = cursor.fetchone()
@@ -270,45 +270,33 @@ def reservar(viaje_id):
         if not viaje or viaje["user_id"] == session["user_id"]:
             return redirect("/viajes")
 
-        # 2. Verificar si ya existe una reserva (activa o cancelada)
         cursor.execute("SELECT * FROM reservas WHERE viaje_id = %s AND user_id = %s", (viaje_id, session["user_id"]))
         reserva_previa = cursor.fetchone()
 
         if reserva_previa:
             if reserva_previa["estado"] == "confirmada":
-                flash("Ya tenés una reserva activa para este viaje.")
+                flash("Ya tenés una reserva activa.")
                 return redirect("/viajes")
             else:
-                # Si estaba cancelada, la volvemos a confirmar
                 cursor.execute("UPDATE reservas SET estado = 'confirmada' WHERE id = %s", (reserva_previa["id"],))
         else:
-            # Si no existía, creamos una nueva
             cursor.execute("INSERT INTO reservas (viaje_id, user_id, estado) VALUES (%s, %s, 'confirmada')", (viaje_id, session["user_id"]))
 
-        # 3. Descontar lugar
         cursor.execute("UPDATE viajes SET lugares = lugares - 1 WHERE id = %s AND lugares > 0", (viaje_id,))
         conn.commit()
 
-        # --- ENVÍO DE NOTIFICACIONES ---
-        # Mail al Pasajero
-        mensaje_pasajero = f"¡Hola! Tu lugar en el viaje de {viaje['origen']} a {viaje['destino']} ha sido reservado con éxito."
-        enviar_notificacion(session["user_email"], "Reserva Confirmada", "¡Todo listo para tu viaje!", mensaje_pasajero)
+        # Notificaciones
+        enviar_notificacion(session["user_email"], "Reserva Confirmada", "¡Todo listo!", f"Reservaste tu lugar de {viaje['origen']} a {viaje['destino']}.")
+        enviar_notificacion(viaje["conductor_email"], "Nuevo Pasajero", "¡Tenés compañía!", f"Alguien se sumó a tu viaje del {viaje['fecha']}.")
 
-        # Mail al Conductor
-        mensaje_conductor = f"¡Hola {viaje['conductor_nombre']}! Tenés un nuevo pasajero para tu viaje del {viaje['fecha']}. Revisá tu app para ver los detalles."
-        enviar_notificacion(viaje["conductor_email"], "Nuevo Pasajero", "¡Alguien se sumó a tu ruta!", mensaje_conductor)
-
-        flash("¡Viaje reservado exitosamente! Te enviamos los detalles por mail.")
-
+        flash("¡Viaje reservado exitosamente!")
     except Exception as e:
         conn.rollback()
-        print(f"Error en reserva: {e}")
-        flash("No se pudo reservar el viaje. Intentá de nuevo.")
+        print(f"Error: {e}")
+        flash("Error al reservar.")
     finally:
         cursor.close()
         conn.close()
-
-    return redirect("/viajes")
 
 # PERFIL
 @app.route("/perfil")
@@ -371,51 +359,30 @@ def cancelar_viaje(viaje_id):
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     
     try:
-        # 1. Verificar que el viaje exista y pertenezca al usuario
-        cursor.execute("""
-            SELECT v.id, v.origen, v.destino, v.fecha, v.user_id 
-            FROM viajes v 
-            WHERE v.id = %s
-        """, (viaje_id,))
+        cursor.execute("SELECT * FROM viajes WHERE id = %s", (viaje_id,))
         viaje = cursor.fetchone()
 
         if viaje and viaje["user_id"] == session["user_id"]:
-            # 2. OBTENER MAILS DE LOS PASAJEROS antes de borrar nada
+            # Cambiado a 'users'
             cursor.execute("""
-                SELECT u.email, u.nombre 
+                SELECT u.email 
                 FROM reservas r
-                JOIN usuarios u ON r.user_id = u.id
+                JOIN users u ON r.user_id = u.id
                 WHERE r.viaje_id = %s AND r.estado = 'confirmada'
             """, (viaje_id,))
             pasajeros = cursor.fetchall()
 
-            # 3. Borrar reservas y luego el viaje
             cursor.execute("DELETE FROM reservas WHERE viaje_id = %s", (viaje_id,))
             cursor.execute("DELETE FROM viajes WHERE id = %s", (viaje_id,))
-            
             conn.commit()
 
-            # 4. NOTIFICAR A CADA PASAJERO
-            asunto = "AVISO: Viaje Cancelado"
-            titulo = "Tu viaje ha sido cancelado"
-            cuerpo_base = f"Hola, te informamos que el conductor canceló el viaje de {viaje['origen']} a {viaje['destino']} programado para el {viaje['fecha']}. Disculpá las molestias."
+            for p in pasajeros:
+                enviar_notificacion(p['email'], "Viaje Cancelado", "Aviso Importante", f"El conductor canceló el viaje de {viaje['origen']} a {viaje['destino']}.")
             
-            for pasajero in pasajeros:
-                # Usamos la función de notificacion que creamos
-                enviar_notificacion(pasajero['email'], asunto, titulo, cuerpo_base)
-
-            flash("Viaje cancelado y pasajeros notificados correctamente.")
-        else:
-            flash("No tenés permiso para cancelar este viaje.")
-
-    except Exception as e:
-        conn.rollback()
-        print(f"Error al cancelar viaje: {e}")
-        flash("Hubo un error al intentar cancelar el viaje.")
+            flash("Viaje cancelado y pasajeros notificados.")
     finally:
         cursor.close()
         conn.close()
-
     return redirect("/perfil")
 
 #CANCELAR RESERVA
@@ -425,49 +392,30 @@ def cancelar_reserva(reserva_id):
         return redirect("/login")
 
     conn = get_db_connection()
-    # Usamos RealDictCursor para manejar los nombres de columnas más fácil
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     
     try:
-        # 1. Obtener datos de la reserva, el viaje y el conductor ANTES de cambiar nada
+        # Cambiado a 'users'
         cursor.execute("""
             SELECT r.viaje_id, v.destino, v.origen, u.email as conductor_email, u.nombre as conductor_nombre
             FROM reservas r
             JOIN viajes v ON r.viaje_id = v.id
-            JOIN usuarios u ON v.user_id = u.id
+            JOIN users u ON v.user_id = u.id
             WHERE r.id = %s AND r.user_id = %s AND r.estado = 'confirmada'
         """, (reserva_id, session["user_id"]))
         
         datos = cursor.fetchone()
 
         if datos:
-            # 2. Cambiar estado de la reserva (en vez de DELETE)
             cursor.execute("UPDATE reservas SET estado = 'cancelado' WHERE id = %s", (reserva_id,))
-            
-            # 3. Devolver el lugar al viaje
             cursor.execute("UPDATE viajes SET lugares = lugares + 1 WHERE id = %s", (datos['viaje_id'],))
-            
             conn.commit()
 
-            # 4. Notificar al conductor por mail
-            asunto = "Un pasajero canceló su lugar"
-            titulo = "Lugar liberado en tu viaje"
-            cuerpo = f"Hola {datos['conductor_nombre']}, te avisamos que un pasajero canceló su reserva para el viaje de {datos['origen']} a {datos['destino']}. Tu lugar vuelve a estar disponible para otros usuarios."
-            
-            enviar_notificacion(datos['conductor_email'], asunto, titulo, cuerpo)
-            
-            flash("Reserva cancelada con éxito. El lugar ha sido liberado.")
-        else:
-            flash("No se encontró la reserva o ya estaba cancelada.")
-
-    except Exception as e:
-        conn.rollback()
-        print(f"Error al cancelar: {e}")
-        flash("Hubo un problema técnico al cancelar la reserva.")
+            enviar_notificacion(datos['conductor_email'], "Lugar liberado", "Cancelación", f"Un pasajero canceló su reserva para el viaje de {datos['origen']} a {datos['destino']}.")
+            flash("Reserva cancelada.")
     finally:
         cursor.close()
         conn.close()
-
     return redirect("/perfil")
 
 #FILTRO DE BUSQUEDA VIAJES
