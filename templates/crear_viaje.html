@@ -2,9 +2,29 @@
 
 {% block content %}
 <h2>Crear Viaje</h2>
-<form method="POST">
-    <input type="text" name="origen" placeholder="Origen" required>
-    <input type="text" name="destino" placeholder="Destino" required>
+<form method="POST">   
+    <label>Origen</label>
+        <select name="origen" required>
+            <option value="" disabled selected>Seleccioná origen</option>
+            <option value="Leones">Leones</option>
+            <option value="Marcos Juarez">Marcos Juarez</option>
+            <option value="Rosario">Rosario</option>
+            <option value="Cordoba">Cordoba</option>
+            <option value="Villa Maria">Villa Maria</option>
+            <option value="Bell ville">Bell ville</option>
+        </select>
+
+        <label>Destino</label>
+        <select name="destino" required>
+            <option value="" disabled selected>Seleccioná destino</option>
+            <option value="Leones">Leones</option>
+            <option value="Marcos Juarez">Marcos Juarez</option>
+            <option value="Rosario">Rosario</option>
+            <option value="Cordoba">Cordoba</option>
+            <option value="Villa Maria">Villa Maria</option>
+            <option value="Bell ville">Bell ville</option>
+        </select>
+    
     <input type="text" name="encuentro" placeholder="Lugar de Encuentro" required>
     <input type="date" name="fecha" min="{{ fecha_hoy }}">
     <input type="time" name="hora" required>
