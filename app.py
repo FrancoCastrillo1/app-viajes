@@ -9,6 +9,7 @@ from email.message import EmailMessage
 #import resend
 import requests
 import random
+#sad
 
 #resend.api_key = "re_39rnQkqH_NBoNsYkeoferdxo2Lv4dGrKL"
 
