@@ -1,3 +1,5 @@
+
+
 from flask import Flask, render_template, request, redirect, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
@@ -253,50 +255,37 @@ def viajes():
 def reservar(viaje_id):
     if "user_id" not in session:
         return redirect("/login")
-    
+
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
-    
     try:
-        # Usamos 'users' como dice tu tabla de Supabase
+        # Traemos los datos para el mail (conductor y viaje)
         cursor.execute("""
-            SELECT v.*, u.email as conductor_email, u.nombre as conductor_nombre 
+            SELECT v.*, u.email as conductor_email 
             FROM viajes v 
             JOIN users u ON v.user_id = u.id 
             WHERE v.id = %s
         """, (viaje_id,))
         viaje = cursor.fetchone()
 
-        if not viaje or viaje["user_id"] == session["user_id"]:
-            return redirect("/viajes")
+        if viaje and viaje["user_id"] != session["user_id"]:
+            # Tu lógica original de insertar y descontar
+            cursor.execute("INSERT INTO reservas (viaje_id, user_id) VALUES (%s, %s)", (viaje_id, session["user_id"]))
+            cursor.execute("UPDATE viajes SET lugares = lugares - 1 WHERE id = %s AND lugares > 0", (viaje_id,))
+            conn.commit()
 
-        cursor.execute("SELECT * FROM reservas WHERE viaje_id = %s AND user_id = %s", (viaje_id, session["user_id"]))
-        reserva_previa = cursor.fetchone()
+            # ENVIAR MAILS (Lo nuevo)
+            enviar_aviso(session["user_email"], "Reserva Confirmada", f"Reservaste un lugar para {viaje['destino']}.")
+            enviar_aviso(viaje["conductor_email"], "Nuevo Pasajero", "Alguien se sumó a tu viaje.")
 
-        if reserva_previa:
-            if reserva_previa["estado"] == "confirmada":
-                flash("Ya tenés una reserva activa.")
-                return redirect("/viajes")
-            else:
-                cursor.execute("UPDATE reservas SET estado = 'confirmada' WHERE id = %s", (reserva_previa["id"],))
-        else:
-            cursor.execute("INSERT INTO reservas (viaje_id, user_id, estado) VALUES (%s, %s, 'confirmada')", (viaje_id, session["user_id"]))
-
-        cursor.execute("UPDATE viajes SET lugares = lugares - 1 WHERE id = %s AND lugares > 0", (viaje_id,))
-        conn.commit()
-
-        # Notificaciones
-        enviar_notificacion(session["user_email"], "Reserva Confirmada", "¡Todo listo!", f"Reservaste tu lugar de {viaje['origen']} a {viaje['destino']}.")
-        enviar_notificacion(viaje["conductor_email"], "Nuevo Pasajero", "¡Tenés compañía!", f"Alguien se sumó a tu viaje del {viaje['fecha']}.")
-
-        flash("¡Viaje reservado exitosamente!")
+            flash("¡Viaje reservado exitosamente!")
     except Exception as e:
-        conn.rollback()
         print(f"Error: {e}")
-        flash("Error al reservar.")
+        flash("No se pudo reservar.")
     finally:
         cursor.close()
         conn.close()
+    return redirect("/viajes")
 
 # PERFIL
 @app.route("/perfil")
@@ -351,35 +340,27 @@ def perfil():
 #CANCELAR VIAJE
      
 @app.route("/cancelar_viaje/<int:viaje_id>", methods=["POST"])
+@app.route("/cancelar_viaje/<int:viaje_id>", methods=["POST"])
 def cancelar_viaje(viaje_id):
     if "user_id" not in session:
         return redirect("/login")
 
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
-    
     try:
-        cursor.execute("SELECT * FROM viajes WHERE id = %s", (viaje_id,))
-        viaje = cursor.fetchone()
+        # 1. Buscar pasajeros antes de borrar
+        cursor.execute("SELECT u.email FROM reservas r JOIN users u ON r.user_id = u.id WHERE r.viaje_id = %s", (viaje_id,))
+        pasajeros = cursor.fetchall()
 
-        if viaje and viaje["user_id"] == session["user_id"]:
-            # Cambiado a 'users'
-            cursor.execute("""
-                SELECT u.email 
-                FROM reservas r
-                JOIN users u ON r.user_id = u.id
-                WHERE r.viaje_id = %s AND r.estado = 'confirmada'
-            """, (viaje_id,))
-            pasajeros = cursor.fetchall()
+        # 2. Borrar (Tu código original)
+        cursor.execute("DELETE FROM reservas WHERE viaje_id = %s", (viaje_id,))
+        cursor.execute("DELETE FROM viajes WHERE id = %s", (viaje_id,))
+        conn.commit()
 
-            cursor.execute("DELETE FROM reservas WHERE viaje_id = %s", (viaje_id,))
-            cursor.execute("DELETE FROM viajes WHERE id = %s", (viaje_id,))
-            conn.commit()
+        # 3. Avisar a todos
+        for p in pasajeros:
+            enviar_aviso(p['email'], "Viaje Cancelado", "El conductor canceló el viaje.")
 
-            for p in pasajeros:
-                enviar_notificacion(p['email'], "Viaje Cancelado", "Aviso Importante", f"El conductor canceló el viaje de {viaje['origen']} a {viaje['destino']}.")
-            
-            flash("Viaje cancelado y pasajeros notificados.")
     finally:
         cursor.close()
         conn.close()
@@ -393,25 +374,25 @@ def cancelar_reserva(reserva_id):
 
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
-    
     try:
-        # Cambiado a 'users'
+        # Buscamos al conductor antes de borrar la reserva
         cursor.execute("""
-            SELECT r.viaje_id, v.destino, v.origen, u.email as conductor_email, u.nombre as conductor_nombre
+            SELECT v.id as viaje_id, u.email as conductor_email 
             FROM reservas r
             JOIN viajes v ON r.viaje_id = v.id
             JOIN users u ON v.user_id = u.id
-            WHERE r.id = %s AND r.user_id = %s AND r.estado = 'confirmada'
-        """, (reserva_id, session["user_id"]))
-        
+            WHERE r.id = %s
+        """, (reserva_id,))
         datos = cursor.fetchone()
 
         if datos:
-            cursor.execute("UPDATE reservas SET estado = 'cancelado' WHERE id = %s", (reserva_id,))
+            # Tu lógica original de borrar y sumar lugar
+            cursor.execute("DELETE FROM reservas WHERE id = %s", (reserva_id,))
             cursor.execute("UPDATE viajes SET lugares = lugares + 1 WHERE id = %s", (datos['viaje_id'],))
             conn.commit()
 
-            enviar_notificacion(datos['conductor_email'], "Lugar liberado", "Cancelación", f"Un pasajero canceló su reserva para el viaje de {datos['origen']} a {datos['destino']}.")
+            # AVISO AL CONDUCTOR
+            enviar_aviso(datos['conductor_email'], "Lugar liberado", "Un pasajero canceló su lugar en tu viaje.")
             flash("Reserva cancelada.")
     finally:
         cursor.close()
@@ -460,16 +441,15 @@ def buscar():
         
 #ENVIAR NOTIFICACIONES POR EMAIL
 
-def enviar_notificacion(email_destino, asunto, mensaje):
+def enviar_aviso(email_destino, asunto, mensaje):
     api_key = os.environ.get("RESEND_API_KEY")
     url = "https://api.resend.com/emails"
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
-    
     data = {
         "from": "Ruta Compartida <avisos@rutacompartida.com.ar>",
         "to": email_destino,
         "subject": asunto,
-        "html": f"<div style='font-family:sans-serif; border:1px solid #E76F51; padding:20px; border-radius:10px;'>{mensaje}</div>"
+        "html": f"<p>{mensaje}</p>"
     }
     requests.post(url, headers=headers, json=data)
 
