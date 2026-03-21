@@ -159,25 +159,27 @@ def verificar():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
-
+        email = request.form.get("email")
+        password = request.form.get("password")
+        
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
-        try:
-            cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
-            user = cursor.fetchone()
+        cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
+        user = cursor.fetchone()
+        cursor.close()
+        conn.close()
 
-            if user and check_password_hash(user["password"], password):
-                session["user_id"] = user["id"]
-                return redirect("/viajes")
-            else:
-                flash("Email o contraseña incorrectos")
-                return render_template("login.html")
-        finally:
-            cursor.close()
-            conn.close()
-
+        if user and check_password_hash(user["password"], password):
+            session["user_id"] = user["id"]
+            # ESTAS DOS LÍNEAS SON LAS QUE TE FALTAN:
+            session["user_email"] = user["email"] 
+            session["user_nombre"] = user["nombre"]
+            
+            flash("¡Bienvenido de nuevo!")
+            return redirect("/viajes")
+        else:
+            flash("Email o contraseña incorrectos")
+    
     return render_template("login.html")
 
 # LOGOUT
