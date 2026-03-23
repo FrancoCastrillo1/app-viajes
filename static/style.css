@@ -110,14 +110,14 @@ body {
 }
 
 /* --- HERO FULL WIDTH (100% ANCHO) --- */
-.hero-container {
+.hero-container, .hero-fullwidth {
     width: 100%;
     position: relative;
     height: 500px;
+    /* Probá cambiar .png por .jpg si ves que no carga */
     background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-                url('/static/img/hero-bg.png'); 
+                url('/static/img/hero-bg.png') no-repeat center center; 
     background-size: cover;
-    background-position: center;
     display: flex;
     flex-direction: column;
     align-items: center;
