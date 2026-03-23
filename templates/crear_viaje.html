@@ -1,35 +1,70 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Crear Viaje</h2>
-<form method="POST">   
-    <label>Origen</label>
-        <select name="origen" required>
-            <option value="" disabled selected>Seleccioná origen</option>
-            <option value="Leones">Leones</option>
-            <option value="Marcos Juarez">Marcos Juarez</option>
-            <option value="Rosario">Rosario</option>
-            <option value="Cordoba">Cordoba</option>
-            <option value="Villa Maria">Villa Maria</option>
-            <option value="Bell ville">Bell ville</option>
-        </select>
+<div class="publish-container">
+    <h2 style="color:var(--accent); font-weight:800;">Detalles del Viaje</h2>
+    <p style="color:#6B7280; margin-bottom:30px;">Completá los datos para publicar tu ruta.</p>
 
-        <label>Destino</label>
-        <select name="destino" required>
-            <option value="" disabled selected>Seleccioná destino</option>
-            <option value="Leones">Leones</option>
-            <option value="Marcos Juarez">Marcos Juarez</option>
-            <option value="Rosario">Rosario</option>
-            <option value="Cordoba">Cordoba</option>
-            <option value="Villa Maria">Villa Maria</option>
-            <option value="Bell ville">Bell ville</option>
-        </select>
-    
-    <input type="text" name="encuentro" placeholder="Lugar de Encuentro" required>
-    <input type="date" name="fecha" min="{{ fecha_hoy }}">
-    <input type="time" name="hora" required>
-    <input type="number" name="lugares" placeholder="Lugares disponibles" required>
-    <input type="number" step="0.01" name="precio" placeholder="Precio por persona" required>
-    <button type="submit">Publicar</button>
-</form>
+    <form method="POST">
+        <div class="input-group">
+            <label>📍 Origen</label>
+            <select name="origen" required>
+                <option value="" disabled selected>Seleccioná origen</option>
+                <option value="Leones">Leones</option>
+                <option value="Marcos Juarez">Marcos Juarez</option>
+                <option value="Rosario">Rosario</option>
+                <option value="Cordoba">Cordoba</option>
+                <option value="Villa Maria">Villa Maria</option>
+                <option value="Bell ville">Bell ville</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>📍 Destino</label>
+            <select name="destino" required>
+                <option value="" disabled selected>Seleccioná destino</option>
+                <option value="Leones">Leones</option>
+                <option value="Marcos Juarez">Marcos Juarez</option>
+                <option value="Rosario">Rosario</option>
+                <option value="Cordoba">Cordoba</option>
+                <option value="Villa Maria">Villa Maria</option>
+                <option value="Bell ville">Bell ville</option>
+            </select>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+            <div class="input-group">
+                <label>📅 Fecha</label>
+                <input type="date" name="fecha" min="{{ fecha_hoy }}" required>
+            </div>
+            <div class="input-group">
+                <label>⏰ Hora</label>
+                <input type="time" name="hora" required>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+            <div class="input-group">
+                <label>🪑 Lugares</label>
+                <input type="number" name="lugares" placeholder="Ej: 3" required>
+            </div>
+            <div class="input-group">
+                <label>💵 Precio por persona</label>
+                <input type="number" step="0.01" name="precio" placeholder="$ ARS" required>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>🤝 Lugar de encuentro</label>
+            <input type="text" name="encuentro" placeholder="Ej: Estación de servicio Shell" required>
+        </div>
+
+        <button type="submit" class="btn-main">Publicar viaje</button>
+    </form>
+
+    <div style="margin-top:20px; background:#F3F4F6; padding:15px; border-radius:15px; display:flex; gap:10px; align-items:center;">
+        <span style="color:var(--primary); font-size:1.2rem;">✅</span>
+        <p style="margin:0; font-size:0.85rem; color:#4B5563;"><strong>Conductor Verificado</strong><br>Los pasajeros confían más en perfiles verificados.</p>
+    </div>
+</div>
 {% endblock %}
