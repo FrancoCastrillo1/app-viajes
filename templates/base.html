@@ -25,7 +25,9 @@
 
     <nav class="navbar-pro">
         <div class="nav-top">
-            <a href="/" class="logo-text">RUTA COMPARTIDA</a>
+        <a href="/" class="logo-container">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Ruta Compartida" class="logo-img">
+        </a>
         </div>
         
         <div class="nav-bottom">
@@ -37,7 +39,7 @@
                     <a href="/login" class="nav-link-auth">Login</a>
                     <a href="/register" class="nav-link-auth btn-border">Register</a>
                 {% else %}
-                    <span class="welcome-msg">¡Hola, {{ session.user_name }}!</span>
+                    <span class="welcome-msg">¡Hola!</span>
                 {% endif %}
             </div>
         </div>
