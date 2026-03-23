@@ -1,20 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="hero-container">
-    <h1>Viajá compartiendo auto <br>y ahorrá hasta un 50%</h1>
-    <p>Encontrá personas que hacen tu misma ruta y compartí gastos.</p>
+<div class="hero-fullwidth">
+    <div class="hero-overlay">
+        <h1>Viajá compartiendo auto <br>y ahorrá hasta un 50%</h1>
+        <p>Encontrá personas que hacen tu misma ruta y compartí gastos.</p>
+    </div>
 </div>
 
-<div class="floating-search">
-    <div class="search-tabs">
-        <button class="tab-btn active">Buscar viaje</button>
-        <a href="/crear_viaje" style="text-decoration:none;"><button class="tab-btn">Publicar viaje</button></a>
-    </div>
-
+<div class="floating-search-card">
+    <h3 class="search-title">📍 Encontrá tu viaje</h3>
     <form action="/buscar" method="GET">
         <div class="input-group">
-            <label>📍 ¿De dónde salís?</label>
+            <label>Origen</label>
             <select name="origen" required>
                 <option value="" disabled selected>Seleccioná origen</option>
                 <option value="Leones">Leones</option>
@@ -27,7 +25,7 @@
         </div>
 
         <div class="input-group">
-            <label>📍 ¿A dónde vas?</label>
+            <label>Destino</label>
             <select name="destino" required>
                 <option value="" disabled selected>Seleccioná destino</option>
                 <option value="Leones">Leones</option>
@@ -40,12 +38,14 @@
         </div>
 
         <div class="input-group">
-            <label>📅 ¿Cuándo?</label>
+            <label>Fecha</label>
             <input type="date" name="fecha">
         </div>
         
         <button type="submit" class="btn-main">Buscar viaje</button>
     </form>
+    
+    <a href="/viajes" class="btn-secondary">🔍 Ver todos los viajes disponibles</a>
 </div>
 
 <div class="features-grid">
@@ -53,21 +53,21 @@
         <span class="feature-icon">🛡️</span>
         <div>
             <strong>Conductores verificados</strong>
-            <p style="margin:0; font-size:0.8rem; color:#6B7280;">Verificación total para tu seguridad.</p>
+            <p>Verificación total para tu seguridad.</p>
         </div>
     </div>
     <div class="feature-item">
         <span class="feature-icon">🔒</span>
         <div>
             <strong>Viajes seguros</strong>
-            <p style="margin:0; font-size:0.8rem; color:#6B7280;">Mejoramos tu experiencia de viaje.</p>
+            <p>Mejoramos tu experiencia de viaje.</p>
         </div>
     </div>
     <div class="feature-item">
         <span class="feature-icon">💰</span>
         <div>
             <strong>Más barato que viajar solo</strong>
-            <p style="margin:0; font-size:0.8rem; color:#6B7280;">Ahorrá compartiendo los gastos.</p>
+            <p>Ahorrá compartiendo los gastos.</p>
         </div>
     </div>
 </div>
