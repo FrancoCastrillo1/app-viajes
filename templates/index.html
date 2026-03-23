@@ -1,39 +1,74 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="hero-section">
-    <h1>¿A dónde querés viajar hoy?</h1>
+<div class="hero-container">
+    <h1>Viajá compartiendo auto <br>y ahorrá hasta un 50%</h1>
     <p>Encontrá personas que hacen tu misma ruta y compartí gastos.</p>
 </div>
 
-<div class="search-card">
+<div class="floating-search">
+    <div class="search-tabs">
+        <button class="tab-btn active">Buscar viaje</button>
+        <a href="/crear_viaje" style="text-decoration:none;"><button class="tab-btn">Publicar viaje</button></a>
+    </div>
+
     <form action="/buscar" method="GET">
-        <label>Origen</label>
-        <select name="origen" required>
-            <option value="" disabled selected>Seleccioná origen</option>
-            <option value="Leones">Leones</option>
-            <option value="Marcos Juarez">Marcos Juarez</option>
-            <option value="Rosario">Rosario</option>
-            <option value="Cordoba">Cordoba</option>
-            <option value="Villa Maria">Villa Maria</option>
-            <option value="Bell ville">Bell ville</option>
-        </select>
+        <div class="input-group">
+            <label>📍 ¿De dónde salís?</label>
+            <select name="origen" required>
+                <option value="" disabled selected>Seleccioná origen</option>
+                <option value="Leones">Leones</option>
+                <option value="Marcos Juarez">Marcos Juarez</option>
+                <option value="Rosario">Rosario</option>
+                <option value="Cordoba">Cordoba</option>
+                <option value="Villa Maria">Villa Maria</option>
+                <option value="Bell ville">Bell ville</option>
+            </select>
+        </div>
 
-        <label>Destino</label>
-        <select name="destino" required>
-            <option value="" disabled selected>Seleccioná destino</option>
-            <option value="Leones">Leones</option>
-            <option value="Marcos Juarez">Marcos Juarez</option>
-            <option value="Rosario">Rosario</option>
-            <option value="Cordoba">Cordoba</option>
-            <option value="Villa Maria">Villa Maria</option>
-            <option value="Bell ville">Bell ville</option>
-        </select>
+        <div class="input-group">
+            <label>📍 ¿A dónde vas?</label>
+            <select name="destino" required>
+                <option value="" disabled selected>Seleccioná destino</option>
+                <option value="Leones">Leones</option>
+                <option value="Marcos Juarez">Marcos Juarez</option>
+                <option value="Rosario">Rosario</option>
+                <option value="Cordoba">Cordoba</option>
+                <option value="Villa Maria">Villa Maria</option>
+                <option value="Bell ville">Bell ville</option>
+            </select>
+        </div>
 
-        <label>Fecha</label>
-        <input type="date" name="fecha">
+        <div class="input-group">
+            <label>📅 ¿Cuándo?</label>
+            <input type="date" name="fecha">
+        </div>
         
-        <button type="submit" class="btn-search" style="width:100%; margin-top:15px;">Buscar Viajes</button>
+        <button type="submit" class="btn-main">Buscar viaje</button>
     </form>
+</div>
+
+<div class="features-grid">
+    <div class="feature-item">
+        <span class="feature-icon">🛡️</span>
+        <div>
+            <strong>Conductores verificados</strong>
+            <p style="margin:0; font-size:0.8rem; color:#6B7280;">Verificación total para tu seguridad.</p>
+        </div>
+    </div>
+    <div class="feature-item">
+        <span class="feature-icon">🔒</span>
+        <div>
+            <strong>Viajes seguros</strong>
+            <p style="margin:0; font-size:0.8rem; color:#6B7280;">Mejoramos tu experiencia de viaje.</p>
+        </div>
+    </div>
+    <div class="feature-item">
+        <span class="feature-icon">💰</span>
+        <div>
+            <strong>Más barato que viajar solo</strong>
+            <p style="margin:0; font-size:0.8rem; color:#6B7280;">Ahorrá compartiendo los gastos.</p>
+        </div>
+    </div>
 </div>
 {% endblock %}
