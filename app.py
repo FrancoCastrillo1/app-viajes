@@ -275,10 +275,52 @@ def reservar(viaje_id):
             cursor.execute("INSERT INTO reservas (viaje_id, user_id) VALUES (%s, %s)", (viaje_id, session["user_id"]))
             cursor.execute("UPDATE viajes SET lugares = lugares - 1 WHERE id = %s AND lugares > 0", (viaje_id,))
             conn.commit()
+            
+            #MAILS MAS PERSONALIZADOS
+            
+            mensaje_usuario = f"""
+            <h2>✅ Reserva confirmada</h2>
+            <p>Hola {session.get("user_nombre", "viajero")},</p>
+            <p>Tu lugar ya está reservado 🎉</p>
 
-            # ENVIAR MAILS (Lo nuevo)
-            enviar_aviso(session["user_email"], "Reserva Confirmada", f"Reservaste un lugar para {viaje['destino']}.")
-            enviar_aviso(viaje["conductor_email"], "Nuevo Pasajero", "Alguien se sumó a tu viaje.")
+            <h3>📍 Detalles del viaje</h3>
+            <ul>
+                <li><strong>Ruta:</strong> {viaje['origen']} → {viaje['destino']}</li>
+                <li><strong>Fecha:</strong> {viaje['fecha']}</li>
+                <li><strong>Hora:</strong> {viaje['hora']}</li>
+            </ul>
+            
+            <h3>👤 Conductor</h3>
+            <p>{viaje['conductor_nombre']}</p>
+            <p>⚠️ Te recomendamos llegar 5-10 minutos antes.</p>
+            <p>Gracias por usar <strong>Ruta Compartida</strong> 🚗</p>
+            """
+            
+            mensaje_conductor = f"""
+            <h2>🚗 Tenés un nuevo pasajero</h2>
+
+            <p>Hola {viaje['conductor_nombre']},</p>
+
+            <p>Alguien reservó un lugar en tu viaje 👇</p>
+
+            <h3>📍 Detalles del viaje</h3>
+            <ul>
+                <li><strong>Ruta:</strong> {viaje['origen']} → {viaje['destino']}</li>
+                <li><strong>Fecha:</strong> {viaje['fecha']}</li>
+                <li><strong>Hora:</strong> {viaje['hora']}</li>
+            </ul>
+
+            <h3>👤 Pasajero</h3>
+            <p>{session.get("user_nombre", "Usuario")}</p>
+
+            <p>📲 Te recomendamos contactarte para coordinar el punto de encuentro.</p>
+
+            <p>Equipo de Ruta Compartida</p>
+            """
+            
+            # ENVIAR MAILS
+            enviar_aviso(session["user_email"], "Reserva Confirmada", mensaje_usuario)
+            enviar_aviso(viaje["conductor_email"], "Nuevo Pasajero", mensaje_conductor)
 
             flash("¡Viaje reservado exitosamente!")
     except Exception as e:
