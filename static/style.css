@@ -20,52 +20,74 @@ body {
 /* --- NAVBAR Y MENÚ CONDICIONAL --- */
 .navbar-pro {
     background: var(--white);
-    padding: 12px 0;
+    padding: 15px 0;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.nav-content {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column; /* Apila el título sobre los botones */
     align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+    gap: 15px;
 }
 
-.nav-left, .nav-right {
-    flex: 1;
-    display: flex;
-    align-items: center;
-}
-
-.nav-right { justify-content: flex-end; gap: 10px; }
-
-.nav-center {
-    flex: 2;
+.nav-top-row {
+    width: 100%;
     text-align: center;
 }
 
+.nav-bottom-row {
+    width: 90%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: space-between; /* Separa Ver Viajes de Login/Register */
+    align-items: center;
+}
+
+/* Título Central */
 .logo-text {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     font-weight: 800;
     color: var(--primary);
     text-decoration: none;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
 }
 
-/* Botón Hamburguesa */
-.openbtn {
-    background-color: var(--primary-light);
-    color: white;
-    border: none;
-    padding: 8px 12px;
+/* Botones de Login y Register (Mejorados) */
+.nav-link-auth {
+    text-decoration: none;
+    color: #4B5563;
+    font-weight: 600;
+    padding: 8px 15px;
+    transition: 0.3s;
+}
+
+.btn-register {
+    background-color: var(--primary);
+    color: white !important;
     border-radius: 8px;
+    margin-left: 10px;
+    box-shadow: 0 4px 6px rgba(231, 111, 81, 0.2);
+}
+
+.btn-register:hover {
+    background-color: #D85D41;
+    transform: translateY(-1px);
+}
+
+.nav-link-simple {
+    text-decoration: none;
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+/* Estilo para el botón de hamburguesa cuando estás logueado */
+.openbtn {
+    background: none;
+    border: 1px solid #E5E7EB;
+    color: #374151;
+    padding: 8px 12px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 20px;
+    font-weight: 600;
 }
 
 /* --- SIDEBAR PROFESIONAL --- */
@@ -110,6 +132,7 @@ body {
 }
 
 /* --- HERO FULL WIDTH (100% ANCHO) --- */
+/* --- HERO SECTION CORREGIDO --- */
 .hero-container, .hero-fullwidth {
     width: 100%;
     position: relative;
@@ -254,3 +277,7 @@ select, input {
     .logo-text { font-size: 1.1rem; }
 }
 
+@media (max-width: 600px) {
+    .logo-text { font-size: 1.3rem; }
+    .nav-bottom-row { flex-direction: row; font-size: 0.85rem; }
+}
