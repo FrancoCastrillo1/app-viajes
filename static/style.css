@@ -1,18 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
 
 :root {
-    --primary: #E76F51;
+    --primary: #E76F51; /* Terracota */
     --primary-light: #F4A261;
     --accent: #264653;
-    --bg-cream: #FFF7ED;
+    --bg-cream: #FFF7ED; /* Crema cálido */
     --white: #ffffff;
     --text-main: #1F2937;
-    --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: var(--bg-cream);
+    background-color: var(--bg-cream); /* Fondo cálido */
     margin: 0;
     color: var(--text-main);
 }
@@ -20,30 +21,30 @@ body {
 /* --- NAVBAR Y MENÚ CONDICIONAL --- */
 .navbar-pro {
     background: var(--white);
-    padding: 15px 0;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    padding: 20px 0; /* Más aire */
+    box-shadow: var(--shadow-sm);
     display: flex;
-    flex-direction: column; /* Apila el título sobre los botones */
+    flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
-.nav-top-row {
-    width: 100%;
-    text-align: center;
-}
+.nav-top-row { width: 100%; text-align: center; }
 
 .nav-bottom-row {
     width: 90%;
     max-width: 1200px;
     display: flex;
-    justify-content: space-between; /* Separa Ver Viajes de Login/Register */
+    justify-content: space-between;
     align-items: center;
 }
 
 /* Título Central */
 .logo-text {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     font-weight: 800;
     color: var(--primary);
     text-decoration: none;
@@ -53,18 +54,17 @@ body {
 /* Botones de Login y Register (Mejorados) */
 .nav-link-auth {
     text-decoration: none;
-    color: #4B5563;
+    color: var(--text-main);
     font-weight: 600;
     padding: 8px 15px;
-    transition: 0.3s;
 }
 
 .btn-register {
     background-color: var(--primary);
     color: white !important;
-    border-radius: 8px;
-    margin-left: 10px;
-    box-shadow: 0 4px 6px rgba(231, 111, 81, 0.2);
+    border-radius: 12px;
+    padding: 10px 20px;
+    box-shadow: 0 4px 12px rgba(231, 111, 81, 0.2);
 }
 
 .btn-register:hover {
@@ -73,12 +73,51 @@ body {
 }
 
 .nav-link-simple {
-   background-color: var(--primary);
-    color: white !important;
-    border-radius: 8px;
-    margin-left: 10px;
-    box-shadow: 0 4px 6px rgba(231, 111, 81, 0.2);
+    text-decoration: none;
+    background-color: transparent !important; /* Sin fondo sólido */
+    color: var(--primary) !important;
+    border: 2px solid var(--primary); /* Estilo outline */
+    padding: 8px 18px;
+    border-radius: 12px;
+    font-weight: 700;
+    transition: 0.3s;
+    box-shadow: none !important;
 }
+.nav-link-simple:hover {
+    background-color: var(--primary) !important;
+    color: white !important;
+}
+
+/* --- CARDS DE VIAJES (Separación y estilo) --- */
+.card {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 24px;
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 40px; /* MÁS SEPARACIÓN ENTRE VIAJES */
+    border: 1px solid rgba(0,0,0,0.02);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* --- BOTÓN RESERVAR (Más llamativo) --- */
+.card button {
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 16px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+
+
 
 /* Estilo para el botón de hamburguesa cuando estás logueado */
 .openbtn {
