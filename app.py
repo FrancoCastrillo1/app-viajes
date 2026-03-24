@@ -261,9 +261,9 @@ def reservar(viaje_id):
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     try:
-        # Traemos los datos para el mail (conductor y viaje)
+        # CORRECCIÓN AQUÍ: Agregamos u.nombre
         cursor.execute("""
-            SELECT v.*, u.email as conductor_email 
+            SELECT v.*, u.email as conductor_email, u.nombre as conductor_nombre 
             FROM viajes v 
             JOIN users u ON v.user_id = u.id 
             WHERE v.id = %s
@@ -271,13 +271,12 @@ def reservar(viaje_id):
         viaje = cursor.fetchone()
 
         if viaje and viaje["user_id"] != session["user_id"]:
-            # Tu lógica original de insertar y descontar
+            # Tu lógica de insertar y descontar se mantiene igual
             cursor.execute("INSERT INTO reservas (viaje_id, user_id) VALUES (%s, %s)", (viaje_id, session["user_id"]))
             cursor.execute("UPDATE viajes SET lugares = lugares - 1 WHERE id = %s AND lugares > 0", (viaje_id,))
             conn.commit()
             
-            #MAILS MAS PERSONALIZADOS
-            
+            # Ahora sí, viaje['conductor_nombre'] va a tener datos
             mensaje_usuario = f"""
             <h2>✅ Reserva confirmada</h2>
             <p>Hola {session.get("user_nombre", "viajero")},</p>
@@ -298,9 +297,7 @@ def reservar(viaje_id):
             
             mensaje_conductor = f"""
             <h2>🚗 Tenés un nuevo pasajero</h2>
-
             <p>Hola {viaje['conductor_nombre']},</p>
-
             <p>Alguien reservó un lugar en tu viaje 👇</p>
 
             <h3>📍 Detalles del viaje</h3>
@@ -312,9 +309,7 @@ def reservar(viaje_id):
 
             <h3>👤 Pasajero</h3>
             <p>{session.get("user_nombre", "Usuario")}</p>
-
             <p>📲 Te recomendamos contactarte para coordinar el punto de encuentro.</p>
-
             <p>Equipo de Ruta Compartida</p>
             """
             
