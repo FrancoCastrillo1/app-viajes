@@ -10,52 +10,54 @@
 
 <body>
     <div id="mySidebar" class="sidebar">
-    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    
-    <a href="/">🏠 Inicio / Buscar</a> {% if session.user_id %}
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+
+        <a href="/">🏠 Inicio / Buscar</a> {% if session.user_id %}
         <a href="/perfil">👤 Mi Perfil / Mis Viajes</a> <a href="/crear_viaje">🚗 Publicar viaje</a>
         <a href="/viajes">🔍 Ver todos los viajes</a>
         <hr>
         <a href="/logout">🚪 Cerrar sesión</a>
-    {% else %}
+        {% else %}
         <a href="/login">🔑 Ingresar</a>
         <a href="/register">📝 Registrarse</a>
-    {% endif %}
-</div>
+        {% endif %}
+    </div>
 
     <nav class="navbar-pro">
-    <div class="nav-content">
-        <div class="nav-left">
-            {% if session.user_id %}
-                <button class="openbtn" onclick="openNav()">☰</button>
-            {% endif %}
-        </div>
-
-        <div class="nav-center">
+        <div class="nav-top-row">
             <a href="/" class="logo-text">RUTA COMPARTIDA</a>
         </div>
 
-        <div class="nav-right">
-            {% if not session.user_id %}
+        <div class="nav-bottom-row">
+            <div class="nav-left">
+                {% if session.user_id %}
+                <button class="openbtn" onclick="openNav()">☰ Menú</button>
+                {% else %}
+                <a href="/viajes" class="nav-link-simple">Ver viajes</a>
+                {% endif %}
+            </div>
+
+            <div class="nav-right">
+                {% if not session.user_id %}
                 <a href="/login" class="nav-link-auth">Login</a>
-                <a href="/register" class="nav-link-auth btn-border">Register</a>
-            {% else %}
+                <a href="/register" class="nav-link-auth btn-register">Register</a>
+                {% else %}
                 <span class="welcome-msg">¡Hola!</span>
-            {% endif %}
+                {% endif %}
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
 
-    
+
     <div id="main" class="container">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
-            {% for message in messages %}
-            <div class="alert shadow">
-                {{ message }}
-            </div>
-            {% endfor %}
+        {% for message in messages %}
+        <div class="alert shadow">
+            {{ message }}
+        </div>
+        {% endfor %}
         {% endif %}
         {% endwith %}
 
@@ -66,6 +68,7 @@
         function openNav() {
             document.getElementById("mySidebar").style.width = "250px";
         }
+
         function closeNav() {
             document.getElementById("mySidebar").style.width = "0";
         }
