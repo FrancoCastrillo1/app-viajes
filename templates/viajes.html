@@ -1,54 +1,66 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Viajes disponibles</h2>
+<h2 style="margin-bottom: 30px; color: var(--accent); font-weight: 800; text-align: center;">🚗 Viajes disponibles</h2>
 
 {% for viaje in viajes %}
-    <div class="card" style="border-left: 8px solid var(--secondary);">
-
-        <p style="font-size: 1.2rem; color: var(--primary);">
-            <strong>{{ viaje.origen }}</strong> ➔ <strong>{{ viaje.destino }}</strong>
-        </p>
-
-        <p><b>📅 Fecha:</b> {{ viaje.fecha }} | <b>⏰ Hora:</b> {{ viaje.hora }}</p>
-
-        <p><b>💰 Precio:</b> ${{ viaje.precio }}</p>
-
-        <p><b>💺 Lugares disponibles:</b> 
-            {% if viaje.lugares > 0 %}
-                <span style="color: #2D3436; font-weight: bold;">{{ viaje.lugares }}</span>
-            {% else %}
-                <span style="color: #e74c3c; font-weight: bold;">AGOTADO</span>
-            {% endif %}
-        </p>
-
-        <p><b>📍 Encuentro:</b> {{ viaje.encuentro }}</p>
-
-        <hr style="border: 0.5px solid #eee; margin: 15px 0;">
-
-        <p><strong>👤 Conductor:</strong> {{ viaje.nombre }} {{ viaje.apellido }}</p>
-
-        <p><strong>📞 Teléfono:</strong> {{ viaje.telefono }}</p>
-
-        {% if viaje.lugares > 0 %}
-            <form action="/reservar/{{ viaje.id }}" method="POST" onsubmit="return confirm('¿Confirmas la reserva para este viaje?');">
-                <button type="submit" style="width: 100%; margin-top: 10px;">Reservar Lugar</button>
-            </form>
-        {% else %}
-            <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center; color: #666;">
-                🚫 No hay asientos disponibles
+    <div class="card" style="margin-bottom: 35px; border-left: 8px solid var(--primary-light);">
+        
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+            <p style="font-size: 1.4rem; color: var(--primary); margin: 0; line-height: 1.2;">
+                <strong>{{ viaje.origen }}</strong> ➔ <strong>{{ viaje.destino }}</strong>
+            </p>
+            <div style="text-align: right;">
+                <span style="background: var(--bg-cream); padding: 8px 15px; border-radius: 12px; font-weight: 800; color: var(--primary); font-size: 1.2rem; display: block;">
+                    ${{ viaje.precio }}
+                </span>
             </div>
-        {% endif %}
+        </div>
 
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <p style="margin: 0;">📅 <b>Fecha:</b> {{ viaje.fecha }}</p>
+            <p style="margin: 0;">⏰ <b>Hora:</b> {{ viaje.hora }}</p>
+            <p style="margin: 0;">📍 <b>Encuentro:</b> {{ viaje.encuentro }}</p>
+            <p style="margin: 0;">💺 <b>Disponibilidad:</b> 
+                {% if viaje.lugares > 0 %}
+                    <span style="color: #2D3436; font-weight: bold;">{{ viaje.lugares }} lugar{{ 'es' if viaje.lugares > 1 else '' }}</span>
+                {% else %}
+                    <span style="color: #e74c3c; font-weight: bold;">AGOTADO</span>
+                {% endif %}
+            </p>
+        </div>
+
+        <hr style="border: 0; border-top: 1.5px solid #f1f1f1; margin: 20px 0;">
+
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <p style="margin: 0; font-size: 0.85rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px;">Conducido por</p>
+                <p style="margin: 0; font-weight: 700; font-size: 1.1rem;">👤 {{ viaje.nombre }} {{ viaje.apellido }}</p>
+                <p style="margin: 5px 0 0; font-size: 0.95rem; color: #4B5563;">📞 {{ viaje.telefono }}</p>
+            </div>
+
+            <div style="flex-grow: 1; max-width: 300px;">
+                {% if viaje.lugares > 0 %}
+                    <form action="/reservar/{{ viaje.id }}" method="POST" onsubmit="return confirm('¿Confirmas la reserva para este viaje?');">
+                        <button type="submit" class="btn-main" style="width: 100%; padding: 14px;">Reservar Lugar</button>
+                    </form>
+                {% else %}
+                    <div style="background: #F3F4F6; padding: 12px; border-radius: 12px; text-align: center; color: #9CA3AF; font-weight: 600;">
+                        🚫 No hay asientos disponibles
+                    </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
+
 {% else %}
-    <div class="card" style="text-align: center; border-left: 8px solid #ccc; padding: 40px 20px;">
-        <p style="font-size: 1.3rem; color: #666; margin-bottom: 20px;">
-            🔍 No hay viajes disponibles para esa ruta o fecha.
+    <div class="card" style="text-align: center; padding: 60px 20px; border-left: 8px solid #D1D5DB;">
+        <div style="font-size: 4rem; margin-bottom: 20px;">🔍</div>
+        <h3 style="color: #374151; margin-bottom: 10px;">No encontramos viajes disponibles</h3>
+        <p style="color: #6B7280; max-width: 400px; margin: 0 auto 25px;">
+            No hay rutas cargadas para ese destino o fecha. Intentá buscando ciudades cercanas o probando otro día.
         </p>
-        <p style="color: #888;">Intentá con otras ciudades o probando una fecha diferente.</p>
-        <br>
-        <a href="/" class="nav-link-auth btn-border" style="display: inline-block; padding: 10px 20px;">
+        <a href="/" class="btn-secondary" style="display: inline-block; width: auto; padding: 12px 30px;">
             Volver a buscar
         </a>
     </div>
