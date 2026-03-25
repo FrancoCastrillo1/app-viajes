@@ -192,6 +192,40 @@
     font-size: 0.9rem;
     margin-bottom: 10px;
 }
+
+@media (max-width: 600px) {
+    .nav-inner {
+        padding: 0 15px; /* Menos espacio a los lados */
+    }
+
+    .nav-logo {
+        /* Eliminamos el centrado absoluto que causa el choque */
+        position: static; 
+        transform: none;
+        left: auto;
+        
+        /* Ajustamos el tamaño para que quepa mejor */
+        font-size: 1.1rem;
+        flex: 1; /* Esto ayuda a que empuje los elementos a los lados */
+        text-align: center;
+    }
+
+    .nav-left, .nav-right {
+        /* Reducimos el tamaño de los textos o padding para ganar espacio */
+        gap: 4px;
+    }
+
+    .nav-link {
+        font-size: 0.8rem;
+        padding: 6px 8px;
+    }
+
+    .nav-cta {
+        font-size: 0.8rem;
+        padding: 8px 12px;
+    }
+}
+    
 </style>
 
 <script>
