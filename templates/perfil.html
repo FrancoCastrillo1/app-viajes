@@ -2,79 +2,373 @@
 
 {% block content %}
 
-<h2>Mi Perfil</h2>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
 
-<section class="perfil-info">
-    <h3>Datos personales</h3>
-    <p><strong>Nombre:</strong> {{ user.nombre }} {{ user.apellido }}</p>
-    <p><strong>Email:</strong> {{ user.email }}</p>
-    <p><strong>Teléfono:</strong> {{ user.telefono }}</p>
-</section>
+.perfil-page { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
 
-<section class="estadisticas">
-    <h3>Estadísticas</h3>
-    <p>Viajes publicados: {{ cantidad_viajes }}</p>
-</section>
+/* HEADER */
+.perfil-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: linear-gradient(135deg, #1a1a2e, #2d1b0e);
+  border-radius: 24px;
+  padding: 36px 40px;
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+}
+.perfil-header::before {
+  content: '';
+  position: absolute;
+  right: -60px; top: -60px;
+  width: 260px; height: 260px;
+  background: radial-gradient(circle, rgba(244,162,97,0.12) 0%, transparent 70%);
+}
+.perfil-avatar {
+  width: 72px; height: 72px;
+  background: linear-gradient(135deg, #E76F51, #F4A261);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 8px 24px rgba(231,111,81,0.4);
+}
+.perfil-info-main { flex: 1; }
+.perfil-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 6px;
+}
+.perfil-meta { display: flex; flex-wrap: wrap; gap: 16px; }
+.perfil-meta-item {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.6);
+  display: flex; align-items: center; gap: 5px;
+}
+.stat-badges { display: flex; gap: 12px; flex-shrink: 0; }
+.stat-badge {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px;
+  padding: 14px 20px;
+  text-align: center;
+}
+.stat-num {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #F4A261;
+  line-height: 1;
+  display: block;
+}
+.stat-label { font-size: 0.72rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.5px; }
 
-<hr>
+/* SECTIONS */
+.section-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 40px 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1.5px;
+  background: #F3E8DC;
+}
 
-<h3>Mis viajes publicados</h3>
-{% for viaje in viajes %}
-<div class="card">
-    <p><strong>{{ viaje.origen }}</strong> → <strong>{{ viaje.destino }}</strong></p>
-    <p>Fecha: {{ viaje.fecha }} | Hora: {{ viaje.hora }}</p>
-    <p>Precio: ${{ viaje.precio }}</p>
-    <p>Lugares disponibles: {{ viaje.lugares }}</p>
+/* VIAJE CARD */
+.viaje-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 26px 28px;
+  margin-bottom: 16px;
+  border: 1.5px solid #F3E8DC;
+  transition: box-shadow 0.2s;
+}
+.viaje-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.07); }
 
-    <h4>Pasajeros confirmados:</h4>
-    <ul>
-    {% for reserva in reservas %}
-        {% if reserva.viaje_id == viaje.id %}
-            <li>{{ reserva.nombre }} {{ reserva.apellido }}</li>
-        {% endif %}
-    {% else %}
-        <li>Aún no hay reservas para este viaje.</li>
-    {% endfor %}
-    </ul>
+.viaje-ruta {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.viaje-ruta span { color: #E76F51; }
 
-    <form action="/cancelar_viaje/{{ viaje.id }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar esta publicación?');">
-        <button type="submit" style="background-color: #ff4d4d; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
-            Eliminar Publicación
-        </button>
-    </form>
-</div>
-{% else %}
-    <p>No publicaste viajes todavía.</p>
-{% endfor %}
+.viaje-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  margin-bottom: 18px;
+}
+.viaje-detail {
+  font-size: 0.88rem;
+  color: #6B7280;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.viaje-detail strong { color: #374151; }
 
-<hr>
+/* PRECIO BADGE */
+.precio-badge {
+  display: inline-block;
+  background: #FFF7ED;
+  color: #E76F51;
+  border: 1.5px solid #FDDCCA;
+  padding: 5px 14px;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 14px;
+}
 
-<h3>Viajes que reservé</h3>
-{% for reserva in mis_reservas %}
-<div class="card" style="border-left: 5px solid #3498db; padding: 15px; margin-bottom: 20px; background-color: #f9f9f9;">
-    <p><strong>{{ reserva.origen }}</strong> → <strong>{{ reserva.destino }}</strong></p>
-    <p>Fecha: {{ reserva.fecha }} | Hora: {{ reserva.hora }}</p>
-    <p>Precio: ${{ reserva.precio }}</p>
-    <p><strong>Conductor:</strong> {{ reserva.conductor_nombre }} {{ reserva.conductor_apellido }}</p>
+/* PASAJEROS */
+.pasajeros-list {
+  background: #F9FAFB;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+.pasajeros-list h4 {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #9CA3AF;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+.pasajeros-list ul { list-style: none; padding: 0; margin: 0; }
+.pasajeros-list li {
+  font-size: 0.9rem;
+  color: #374151;
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pasajeros-list li::before { content: '👤'; font-size: 0.8rem; }
+.no-pasajeros { font-size: 0.88rem; color: #9CA3AF; font-style: italic; }
 
-    <div style="display: flex; gap: 10px; margin-top: 15px;">
-        <a href="https://wa.me/{{ reserva.conductor_telefono }}?text=Hola%20{{ reserva.conductor_nombre }},%20te%20escribo%20por%20el%20viaje%20a%20{{ reserva.destino }}%20desde%20la%20App%20Ruta-Compartida" 
-           target="_blank" 
-           style="background-color: #25D366; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; display: flex; align-items: center;">
-           WhatsApp del Conductor
-        </a>
+/* BOTONES */
+.btn-danger {
+  background: #FEF2F2;
+  color: #DC2626;
+  border: 1.5px solid #FECACA;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-danger:hover { background: #FEE2E2; }
 
-        <form action="/cancelar_reserva/{{ reserva.reserva_id }}" method="POST" onsubmit="return confirm('¿Estás seguro de que quieres cancelar tu lugar en este viaje?');">
-            <button type="submit" style="background-color: #e74c3c; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
-                Cancelar mi lugar
-            </button>
-        </form>
+.btn-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ECFDF5;
+  color: #059669;
+  border: 1.5px solid #A7F3D0;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.btn-whatsapp:hover { background: #D1FAE5; }
+
+.card-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+/* RESERVA CARD */
+.reserva-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 26px 28px;
+  margin-bottom: 16px;
+  border-left: 5px solid #E76F51;
+  border-top: 1.5px solid #F3E8DC;
+  border-right: 1.5px solid #F3E8DC;
+  border-bottom: 1.5px solid #F3E8DC;
+  transition: box-shadow 0.2s;
+}
+.reserva-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.07); }
+
+.conductor-info {
+  background: #FFF7ED;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 14px 0;
+  font-size: 0.9rem;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+  background: #fff;
+  border-radius: 18px;
+  border: 1.5px dashed #E5E7EB;
+}
+.empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.empty-state p { color: #9CA3AF; font-size: 0.95rem; margin: 0 0 18px; }
+.empty-state a {
+  display: inline-block;
+  background: #E76F51;
+  color: white;
+  padding: 11px 24px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+@media (max-width: 640px) {
+  .perfil-header { flex-direction: column; text-align: center; padding: 28px 24px; }
+  .perfil-meta { justify-content: center; }
+  .stat-badges { justify-content: center; }
+}
+</style>
+
+<div class="perfil-page">
+
+  <!-- HEADER DE PERFIL -->
+  <div class="perfil-header">
+    <div class="perfil-avatar">{{ user.nombre[0] | upper }}</div>
+    <div class="perfil-info-main">
+      <h1 class="perfil-name">{{ user.nombre }} {{ user.apellido }}</h1>
+      <div class="perfil-meta">
+        <span class="perfil-meta-item">✉️ {{ user.email }}</span>
+        <span class="perfil-meta-item">📞 {{ user.telefono }}</span>
+      </div>
     </div>
-</div>
-{% else %}
-    <p>No reservaste viajes todavía.</p>
-{% endfor %}
+    <div class="stat-badges">
+      <div class="stat-badge">
+        <span class="stat-num">{{ cantidad_viajes }}</span>
+        <span class="stat-label">Viajes publicados</span>
+      </div>
+      <div class="stat-badge">
+        <span class="stat-num">{{ mis_reservas | length }}</span>
+        <span class="stat-label">Reservas activas</span>
+      </div>
+    </div>
+  </div>
 
+  <!-- MIS VIAJES PUBLICADOS -->
+  <h2 class="section-title">🚗 Mis viajes publicados</h2>
+
+  {% for viaje in viajes %}
+  <div class="viaje-card">
+    <div class="viaje-ruta">
+      {{ viaje.origen }} <span>→</span> {{ viaje.destino }}
+    </div>
+
+    <span class="precio-badge">${{ viaje.precio }}</span>
+
+    <div class="viaje-details">
+      <span class="viaje-detail">📅 <strong>{{ viaje.fecha }}</strong></span>
+      <span class="viaje-detail">⏰ <strong>{{ viaje.hora }}</strong></span>
+      <span class="viaje-detail">💺 <strong>{{ viaje.lugares }}</strong> lugar{{ 'es' if viaje.lugares != 1 else '' }} disponible{{ 's' if viaje.lugares != 1 else '' }}</span>
+    </div>
+
+    <div class="pasajeros-list">
+      <h4>Pasajeros confirmados</h4>
+      <ul>
+        {% set tiene_pasajeros = namespace(value=false) %}
+        {% for reserva in reservas %}
+          {% if reserva.viaje_id == viaje.id %}
+            {% set tiene_pasajeros.value = true %}
+            <li>{{ reserva.nombre }} {{ reserva.apellido }}</li>
+          {% endif %}
+        {% endfor %}
+        {% if not tiene_pasajeros.value %}
+          <li class="no-pasajeros">Aún no hay pasajeros para este viaje.</li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <div class="card-actions">
+      <form action="/cancelar_viaje/{{ viaje.id }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar esta publicación?');">
+        <button type="submit" class="btn-danger">🗑️ Eliminar publicación</button>
+      </form>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🚗</div>
+    <p>Todavía no publicaste ningún viaje.</p>
+    <a href="/crear_viaje">Publicar mi primer viaje</a>
+  </div>
+  {% endfor %}
+
+  <!-- MIS RESERVAS -->
+  <h2 class="section-title">🎫 Viajes que reservé</h2>
+
+  {% for reserva in mis_reservas %}
+  <div class="reserva-card">
+    <div class="viaje-ruta">
+      {{ reserva.origen }} <span>→</span> {{ reserva.destino }}
+    </div>
+
+    <span class="precio-badge">${{ reserva.precio }}</span>
+
+    <div class="viaje-details">
+      <span class="viaje-detail">📅 <strong>{{ reserva.fecha }}</strong></span>
+      <span class="viaje-detail">⏰ <strong>{{ reserva.hora }}</strong></span>
+    </div>
+
+    <div class="conductor-info">
+      👤 <strong>Conductor:</strong> {{ reserva.conductor_nombre }} {{ reserva.conductor_apellido }}
+    </div>
+
+    <div class="card-actions">
+      <a href="https://wa.me/{{ reserva.conductor_telefono }}?text=Hola%20{{ reserva.conductor_nombre }},%20te%20escribo%20por%20el%20viaje%20a%20{{ reserva.destino }}%20desde%20Ruta%20Compartida"
+         target="_blank" class="btn-whatsapp">
+        💬 WhatsApp del conductor
+      </a>
+      <form action="/cancelar_reserva/{{ reserva.reserva_id }}" method="POST" onsubmit="return confirm('¿Cancelás tu lugar en este viaje?');">
+        <button type="submit" class="btn-danger">✕ Cancelar mi lugar</button>
+      </form>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🔍</div>
+    <p>Todavía no reservaste ningún viaje.</p>
+    <a href="/viajes">Buscar viajes disponibles</a>
+  </div>
+  {% endfor %}
+
+</div>
 {% endblock %}
+
 
 
