@@ -67,46 +67,39 @@
     {% block content %}{% endblock %}
 </main>
 
+<!-- CONTACT -->
 <section class="contact-section">
     <div class="contact-container">
-        <h3>¿Tienes dudas?</h3>
-        <p>Escríbenos a <a href="mailto:rutacompartida.soporte@gmail.com">rutacompartida.soporte@gmail.com</a></p>
+        <h3>¿Tenés dudas?</h3>
+        <p>Escribinos a <a href="mailto:rutacompartida.soporte@gmail.com">rutacompartida.soporte@gmail.com</a></p>
     </div>
 </section>
 
+<!-- FOOTER -->
 <footer class="main-footer">
     <div class="footer-content">
         <div class="footer-logo">
-            <span class="logo-text">Ruta Compartida</span>
+            <a href="/" class="footer-logo-link">Ruta Compartida</a>
+            <p class="footer-tagline">Viajá seguro, viajá acompañado.</p>
         </div>
-        
+
         <div class="footer-links">
             <a href="/viajes">Buscar Viajes</a>
-            <a href="/templates/terminos.html">Términos y Condiciones</a>
+            <a href="/crear_viaje">Publicar viaje</a>
+            <a href="/terminos">Términos y Condiciones</a>
             <a href="mailto:rutacompartida.soporte@gmail.com">Contacto</a>
         </div>
-        
+
         <hr class="footer-divider">
-        
+
         <div class="footer-bottom">
             <p>&copy; 2026 Ruta Compartida. Todos los derechos reservados.</p>
-            <p class="footer-tagline">Viaja seguro, viaja acompañado.</p>
         </div>
     </div>
 </footer>
 
-<script>
-    /* Funciones para el sidebar que ya tenías */
-    function openNav() {
-        document.getElementById("mySidebar").style.width = "250px";
-    }
-    function closeNav() {
-        document.getElementById("mySidebar").style.width = "0";
-    }
-</script>
-
-
 <style>
+/* ===== NAVBAR ===== */
 .navbar {
     background: #fff;
     border-bottom: 1px solid #F3E8DC;
@@ -135,11 +128,7 @@
     left: 50%;
     transform: translateX(-50%);
 }
-.nav-left, .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
+.nav-left, .nav-right { display: flex; align-items: center; gap: 8px; }
 .nav-link {
     text-decoration: none;
     color: #4B5563;
@@ -169,16 +158,11 @@
     width: 40px; height: 40px;
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    gap: 5px;
-    cursor: pointer;
-    padding: 0;
+    gap: 5px; cursor: pointer; padding: 0;
 }
-.hamburger span {
-    display: block;
-    width: 18px; height: 2px;
-    background: #374151;
-    border-radius: 2px;
-}
+.hamburger span { display: block; width: 18px; height: 2px; background: #374151; border-radius: 2px; }
+
+/* ===== SIDEBAR ===== */
 .sidebar {
     height: 100%;
     width: 0;
@@ -216,11 +200,9 @@
     border-left: none !important;
     padding: 0 !important;
 }
-.flash-wrapper {
-    max-width: 900px;
-    margin: 20px auto 0;
-    padding: 0 20px;
-}
+
+/* ===== FLASH ===== */
+.flash-wrapper { max-width: 900px; margin: 20px auto 0; padding: 0 20px; }
 .flash-msg {
     background: #FEF3C7;
     color: #92400E;
@@ -232,115 +214,67 @@
     margin-bottom: 10px;
 }
 
+/* ===== CONTACT SECTION ===== */
 .contact-section {
-    background-color: #f9f9f9;
-    padding: 40px 20px;
+    background: #FFF7ED;
+    padding: 50px 24px;
     text-align: center;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #F3E8DC;
 }
-
 .contact-section h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.8rem;
-    color: #1a1a1a;
-    margin-bottom: 10px;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.6rem;
+    color: #1a1a2e;
+    margin: 0 0 10px;
 }
+.contact-section p { color: #6B7280; font-size: 1rem; margin: 0; }
+.contact-section a { color: #E76F51; font-weight: 600; text-decoration: none; }
+.contact-section a:hover { text-decoration: underline; }
 
-/* Estilos del Footer */
+/* ===== FOOTER ===== */
 .main-footer {
-    background-color: #1a1a1a; /* Un tono oscuro elegante */
-    color: #ffffff;
-    padding: 60px 20px 30px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #1a1a2e;
+    color: #fff;
+    padding: 60px 24px 32px;
 }
-
-.footer-content {
-    max-width: 1100px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.footer-logo .logo-text {
-    font-family: 'Playfair Display', serif;
+.footer-content { max-width: 1100px; margin: 0 auto; text-align: center; }
+.footer-logo-link {
+    font-family: 'Playfair Display', Georgia, serif;
     font-size: 1.5rem;
     font-weight: 700;
+    color: #F4A261;
+    text-decoration: none;
     letter-spacing: 1px;
+    display: block;
+    margin-bottom: 8px;
 }
-
+.footer-tagline { color: rgba(255,255,255,0.4); font-style: italic; font-size: 0.9rem; margin: 0 0 30px; }
 .footer-links {
-    margin: 30px 0;
     display: flex;
     justify-content: center;
-    gap: 25px;
+    gap: 28px;
     flex-wrap: wrap;
+    margin-bottom: 30px;
 }
-
 .footer-links a {
-    color: #cccccc;
+    color: rgba(255,255,255,0.55);
     text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.3s ease;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: color 0.2s;
 }
+.footer-links a:hover { color: #fff; }
+.footer-divider { border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 0 0 24px; }
+.footer-bottom p { font-size: 0.82rem; color: rgba(255,255,255,0.3); margin: 0; }
 
-.footer-links a:hover {
-    color: #ffffff;
-}
-
-.footer-divider {
-    border: 0;
-    border-top: 1px solid #333;
-    margin: 30px 0;
-}
-
-.footer-bottom {
-    font-size: 0.85rem;
-    color: #888;
-}
-
-.footer-bottom p {
-    margin: 5px 0;
-}
-
-.footer-tagline {
-    font-style: italic;
-    opacity: 0.7;
-}
-
-
-
+/* ===== MOBILE ===== */
 @media (max-width: 600px) {
-    .nav-inner {
-        padding: 0 15px; /* Menos espacio a los lados */
-    }
-
-    .nav-logo {
-        /* Eliminamos el centrado absoluto que causa el choque */
-        position: static; 
-        transform: none;
-        left: auto;
-        
-        /* Ajustamos el tamaño para que quepa mejor */
-        font-size: 1.1rem;
-        flex: 1; /* Esto ayuda a que empuje los elementos a los lados */
-        text-align: center;
-    }
-
-    .nav-left, .nav-right {
-        /* Reducimos el tamaño de los textos o padding para ganar espacio */
-        gap: 4px;
-    }
-
-    .nav-link {
-        font-size: 0.8rem;
-        padding: 6px 8px;
-    }
-
-    .nav-cta {
-        font-size: 0.8rem;
-        padding: 8px 12px;
-    }
+    .nav-inner { padding: 0 15px; }
+    .nav-logo { position: static; transform: none; left: auto; font-size: 1.1rem; flex: 1; text-align: center; }
+    .nav-left, .nav-right { gap: 4px; }
+    .nav-link { font-size: 0.8rem; padding: 6px 8px; }
+    .nav-cta { font-size: 0.8rem; padding: 8px 12px; }
 }
-
 </style>
 
 <script>
