@@ -14,7 +14,7 @@
     </div>
   </div>
   <div class="hero-img-wrap">
-    <img src="/static/img/foto-baul.png" alt="Viajeros cargando el baúl" class="hero-photo">
+    <img src="/static/img/hero-bg.png" alt="Viajeros cargando el baúl" class="hero-photo">
   </div>
 </section>
 
@@ -115,7 +115,7 @@
       </div>
     </div>
     <div class="social-img-wrap">
-      <img src="/static/img/foto-juntos.png" alt="Amigos viajando juntos" class="social-photo">
+      <img src="/static/img/foto-baul.png" alt="Amigos viajando juntos" class="social-photo">
       <div class="social-img-badge">¡Viajando en Ruta Compartida! 🗺️</div>
     </div>
   </div>
@@ -180,6 +180,7 @@
   overflow: hidden;
   position: relative;
 }
+
 .hero::before {
   content: '';
   position: absolute;
@@ -478,17 +479,97 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 780px) {
-  .hero { flex-direction: column; min-height: auto; }
-  .hero-inner { padding: 60px 24px 40px; }
-  .hero-img-wrap { width: 100%; height: 260px; }
-  .hero-img-wrap::before { width: 60px; }
-  .search-card { padding: 28px 22px; }
-  .search-row { flex-direction: column; gap: 12px; }
-  .route-arrow { display: none; }
-  .field-date { flex: 1; }
-  .step-divider { display: none; }
-  .social-inner, .trust-inner { flex-direction: column; gap: 40px; }
-  .social-img-badge { font-size: 0.78rem; padding: 8px 14px; }
+  /* 1. Ocultar la imagen del Hero en Celulares */
+  .hero-img-wrap { 
+    display: none !important; 
+  }
+
+  /* 2. Ajustar el contenedor del Hero */
+  .hero { 
+    flex-direction: column; 
+    min-height: auto; 
+    padding-bottom: 60px; /* Espacio extra para que no choque con la search-card */
+  }
+
+  .hero-inner { 
+    padding: 60px 24px 80px; 
+    text-align: center; /* Centramos el texto para mejor estética móvil */
+  }
+
+  .hero-sub {
+    margin: 0 auto 32px;
+  }
+
+  .hero-ctas { 
+    justify-content: center; /* Centramos los botones */
+  }
+
+  /* 3. Optimizar Card de Búsqueda */
+  .search-wrapper {
+    margin-top: -60px; /* Subimos un poco la card sobre el fondo oscuro */
+  }
+
+  .search-card { 
+    padding: 30px 20px; 
+    border-radius: 20px;
+  }
+
+  .search-row { 
+    flex-direction: column; 
+    gap: 15px; 
+    align-items: stretch; /* Los inputs ocupan todo el ancho */
+  }
+
+  .field-group {
+    width: 100%;
+  }
+
+  .route-arrow { 
+    display: none; /* Quitamos la flecha en móvil para ganar espacio vertical */
+  }
+
+  /* 4. Ajustes de Secciones Sociales y Confianza */
+  .social-inner, .trust-inner { 
+    flex-direction: column; 
+    gap: 40px; 
+    text-align: center;
+  }
+
+  .social-desc {
+    margin: 0 auto 32px;
+  }
+
+  .social-stats {
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .trust-list {
+    align-items: center; /* Centramos los checks de confianza */
+    text-align: left;
+    display: inline-block;
+    margin: 0 auto 32px;
+  }
+
+  /* 5. Pasos de "Cómo funciona" */
+  .how-steps {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .step {
+    max-width: 100%; /* Los pasos ocupan el ancho completo */
+    width: 100%;
+  }
+
+  .step-divider { 
+    display: none; 
+  }
+
+  /* 6. Ajuste de Títulos */
+  .hero-title {
+    font-size: 2.1rem; /* Un poco más pequeño para que no rompa líneas feo */
+  }
 }
 </style>
 
