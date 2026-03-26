@@ -67,6 +67,45 @@
     {% block content %}{% endblock %}
 </main>
 
+<section class="contact-section">
+    <div class="contact-container">
+        <h3>¿Tienes dudas?</h3>
+        <p>Escríbenos a <a href="mailto:rutacompartida.soporte@gmail.com">rutacompartida.soporte@gmail.com</a></p>
+    </div>
+</section>
+
+<footer class="main-footer">
+    <div class="footer-content">
+        <div class="footer-logo">
+            <span class="logo-text">Ruta Compartida</span>
+        </div>
+        
+        <div class="footer-links">
+            <a href="/viajes">Buscar Viajes</a>
+            <a href="/terminos">Términos y Condiciones</a>
+            <a href="mailto:rutacompartida.soporte@gmail.com">Contacto</a>
+        </div>
+        
+        <hr class="footer-divider">
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 Ruta Compartida. Todos los derechos reservados.</p>
+            <p class="footer-tagline">Viaja seguro, viaja acompañado.</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    /* Funciones para el sidebar que ya tenías */
+    function openNav() {
+        document.getElementById("mySidebar").style.width = "250px";
+    }
+    function closeNav() {
+        document.getElementById("mySidebar").style.width = "0";
+    }
+</script>
+
+
 <style>
 .navbar {
     background: #fff;
@@ -193,6 +232,82 @@
     margin-bottom: 10px;
 }
 
+.contact-section {
+    background-color: #f9f9f9;
+    padding: 40px 20px;
+    text-align: center;
+    border-top: 1px solid #eee;
+}
+
+.contact-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+}
+
+/* Estilos del Footer */
+.main-footer {
+    background-color: #1a1a1a; /* Un tono oscuro elegante */
+    color: #ffffff;
+    padding: 60px 20px 30px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.footer-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.footer-logo .logo-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.footer-links {
+    margin: 30px 0;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.footer-links a {
+    color: #cccccc;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #ffffff;
+}
+
+.footer-divider {
+    border: 0;
+    border-top: 1px solid #333;
+    margin: 30px 0;
+}
+
+.footer-bottom {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.footer-bottom p {
+    margin: 5px 0;
+}
+
+.footer-tagline {
+    font-style: italic;
+    opacity: 0.7;
+}
+
+
+
 @media (max-width: 600px) {
     .nav-inner {
         padding: 0 15px; /* Menos espacio a los lados */
@@ -225,7 +340,7 @@
         padding: 8px 12px;
     }
 }
-    
+
 </style>
 
 <script>
@@ -234,4 +349,3 @@ function closeNav() { document.getElementById("mySidebar").style.width = "0"; }
 </script>
 </body>
 </html>
-
