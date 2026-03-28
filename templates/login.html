@@ -1,162 +1,101 @@
 {% extends "base.html" %}
 
 {% block content %}
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
 
-.auth-wrapper {
-  min-height: calc(100vh - 64px - 200px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 48px 20px;
-  background: linear-gradient(160deg, #FFF7ED 0%, #fff 60%);
-}
-.auth-card {
-  background: #fff;
-  border-radius: 24px;
-  padding: 48px 44px;
-  width: 100%;
-  max-width: 420px;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.1), 0 4px 16px rgba(231,111,81,0.07);
-  border: 1.5px solid #F3E8DC;
-}
-.auth-logo {
-  text-align: center;
-  margin-bottom: 32px;
-}
-.auth-logo-text {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #E76F51;
-  text-decoration: none;
-  display: block;
-  margin-bottom: 6px;
-}
-.auth-logo p {
-  font-size: 0.85rem;
-  color: #9CA3AF;
-  margin: 0;
-}
-.auth-title {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 1.7rem;
-  font-weight: 700;
-  color: #1a1a2e;
-  margin: 0 0 8px;
-  text-align: center;
-}
-.auth-subtitle {
-  text-align: center;
-  color: #9CA3AF;
-  font-size: 0.9rem;
-  margin: 0 0 32px;
-}
-.auth-form {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 18px !important;
-}
-.auth-field { display: flex; flex-direction: column; gap: 7px; }
-.auth-label {
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.7px;
-  color: #6B7280;
-}
-.auth-input {
-  padding: 14px 16px;
-  border-radius: 12px;
-  border: 1.5px solid #E5E7EB;
-  background: #FAFAFA;
-  font-size: 1rem;
-  color: #1F2937;
-  font-family: inherit;
-  box-sizing: border-box;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  width: 100%;
-}
-.auth-input:focus {
-  outline: none;
-  border-color: #E76F51;
-  box-shadow: 0 0 0 3px rgba(231,111,81,0.1);
-  background: #fff;
-}
-.btn-auth {
-  width: 100%;
-  padding: 16px;
-  background: linear-gradient(135deg, #E76F51, #D85D41);
-  color: white;
-  border: none;
-  border-radius: 14px;
-  font-size: 1.05rem;
-  font-weight: 700;
-  font-family: inherit;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(231,111,81,0.32);
-  transition: transform 0.2s, box-shadow 0.2s;
-  margin-top: 6px;
-}
-.btn-auth:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(231,111,81,0.4);
-}
-.auth-divider {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 6px 0;
-}
-.auth-divider::before, .auth-divider::after {
-  content: ''; flex: 1;
-  height: 1px; background: #F3E8DC;
-}
-.auth-divider span { color: #D1D5DB; font-size: 0.8rem; }
-.auth-footer {
-  text-align: center;
-  margin-top: 22px;
-  font-size: 0.9rem;
-  color: #6B7280;
-}
-.auth-footer a { color: #E76F51; font-weight: 600; text-decoration: none; }
-.auth-footer a:hover { text-decoration: underline; }
+<div class="crear-wrapper">
 
-@media (max-width: 480px) {
-  .auth-card { padding: 36px 24px; }
-}
-</style>
+  <div class="crear-header">
+    <h1>🚗 Publicá tu viaje</h1>
+    <p>Completá los datos y empezá a recibir pasajeros</p>
+  </div>
 
-<div class="auth-wrapper">
-  <div class="auth-card">
+  <div class="crear-card">
+    <form method="POST" class="crear-form">
 
-    <div class="auth-logo">
-      <a href="/" class="auth-logo-text">Ruta Compartida</a>
-      <p>Viajá seguro, viajá acompañado</p>
-    </div>
+      <!-- RUTA -->
+      <div class="section-sep"><span>Ruta</span></div>
 
-    <h1 class="auth-title">Bienvenido de nuevo</h1>
-    <p class="auth-subtitle">Ingresá a tu cuenta para ver tus viajes</p>
-
-    <form method="POST" class="auth-form">
-      <div class="auth-field">
-        <label class="auth-label">Email</label>
-        <input type="email" name="email" class="auth-input" placeholder="tu@email.com" required>
+      <div class="crear-row">
+        <div class="crear-field">
+          <label class="crear-label">📍 Origen</label>
+          <div class="select-wrap">
+            <select name="origen" class="crear-select" required>
+              <option value="" disabled selected>Seleccioná</option>
+              <option value="Leones">Leones</option>
+              <option value="Marcos Juarez">Marcos Juarez</option>
+              <option value="Rosario">Rosario</option>
+              <option value="Cordoba">Córdoba</option>
+              <option value="Villa Maria">Villa María</option>
+              <option value="Bell ville">Bell Ville</option>
+            </select>
+            <span class="chevron">↓</span>
+          </div>
+        </div>
+        <div class="crear-field">
+          <label class="crear-label">🏁 Destino</label>
+          <div class="select-wrap">
+            <select name="destino" class="crear-select" required>
+              <option value="" disabled selected>Seleccioná</option>
+              <option value="Leones">Leones</option>
+              <option value="Marcos Juarez">Marcos Juarez</option>
+              <option value="Rosario">Rosario</option>
+              <option value="Cordoba">Córdoba</option>
+              <option value="Villa Maria">Villa María</option>
+              <option value="Bell ville">Bell Ville</option>
+            </select>
+            <span class="chevron">↓</span>
+          </div>
+        </div>
       </div>
-      <div class="auth-field">
-        <label class="auth-label">Contraseña</label>
-        <input type="password" name="password" class="auth-input" placeholder="••••••••" required>
+
+      <!-- FECHA Y HORA -->
+      <div class="section-sep"><span>Fecha y hora</span></div>
+
+      <div class="crear-row">
+        <div class="crear-field">
+          <label class="crear-label">📅 Fecha</label>
+          <input type="date" name="fecha" class="crear-input" min="{{ fecha_hoy }}" required>
+        </div>
+        <div class="crear-field">
+          <label class="crear-label">⏰ Hora de salida</label>
+          <input type="time" name="hora" class="crear-input" required>
+        </div>
       </div>
-      <button type="submit" class="btn-auth">Ingresar →</button>
+
+      <!-- DETALLES -->
+      <div class="section-sep"><span>Detalles</span></div>
+
+      <div class="crear-row">
+        <div class="crear-field">
+          <label class="crear-label">🪑 Lugares disponibles</label>
+          <input type="number" name="lugares" class="crear-input"
+                 placeholder="Ej: 3" min="1" max="8" required>
+        </div>
+        <div class="crear-field">
+          <label class="crear-label">💵 Precio por persona</label>
+          <input type="number" step="0.01" name="precio" class="crear-input"
+                 placeholder="$ ARS" min="0" required>
+        </div>
+      </div>
+
+      <div class="crear-field">
+        <label class="crear-label">🤝 Punto de encuentro</label>
+        <input type="text" name="encuentro" class="crear-input"
+               placeholder="Ej: Estación Shell, esquina Ruta 11 y Av. San Martín" required>
+      </div>
+
+      <button type="submit" class="btn-publicar">Publicar viaje →</button>
+
     </form>
 
-    <div class="auth-divider"><span>o</span></div>
-
-    <div class="auth-footer">
-      ¿No tenés cuenta? <a href="/register">Registrate gratis</a>
+    <div class="verificado-banner">
+      <span class="check">✅</span>
+      <div>
+        <h4>Conductor verificado</h4>
+        <p>Los pasajeros ven tu cuenta verificada y confían más en tu viaje.</p>
+      </div>
     </div>
-
   </div>
+
 </div>
 {% endblock %}
