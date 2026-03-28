@@ -1,99 +1,105 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <title>Ruta Compartida</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-</head>
-<body>
+{% extends "base.html" %}
 
-<div id="mySidebar" class="sidebar">
-    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <a href="/">🏠 Inicio</a>
-    <a href="/viajes">🔍 Ver viajes</a>
-    {% if session.user_id %}
-    <a href="/perfil">👤 Mi Perfil</a>
-    <a href="/crear_viaje">🚗 Publicar viaje</a>
-    <hr style="border-color: #F3E8DC; margin: 10px 20px;">
-    <a href="/logout" style="color: #DC2626;">🚪 Cerrar sesión</a>
-    {% else %}
-    <a href="/login">🔑 Ingresar</a>
-    <a href="/register">📝 Registrarse</a>
-    {% endif %}
+{% block content %}
+
+<div class="viajes-page">
+
+  <div class="viajes-header">
+    <h1>🚗 Viajes disponibles</h1>
+    <p>Encontrá tu próximo viaje compartido</p>
+  </div>
+
+  <!-- FILTRO -->
+  <div class="filter-bar">
+    <form action="/buscar" method="GET">
+      <div class="filter-field">
+        <label class="filter-label">Origen</label>
+        <select name="origen" class="filter-select">
+          <option value="">Todos</option>
+          <option value="Leones">Leones</option>
+          <option value="Marcos Juarez">Marcos Juarez</option>
+          <option value="Rosario">Rosario</option>
+          <option value="Cordoba">Córdoba</option>
+          <option value="Villa Maria">Villa María</option>
+          <option value="Bell ville">Bell Ville</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label class="filter-label">Destino</label>
+        <select name="destino" class="filter-select">
+          <option value="">Todos</option>
+          <option value="Leones">Leones</option>
+          <option value="Marcos Juarez">Marcos Juarez</option>
+          <option value="Rosario">Rosario</option>
+          <option value="Cordoba">Córdoba</option>
+          <option value="Villa Maria">Villa María</option>
+          <option value="Bell ville">Bell Ville</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label class="filter-label">Fecha</label>
+        <input type="date" name="fecha" class="filter-date">
+      </div>
+      <button type="submit" class="filter-btn">Filtrar 🔍</button>
+      <a href="/viajes" class="filter-reset">Limpiar</a>
+    </form>
+  </div>
+
+  <!-- LISTADO -->
+  {% for viaje in viajes %}
+  <div class="viaje-card">
+
+    <div class="viaje-top">
+      <div class="viaje-ruta">
+        {{ viaje.origen }}
+        <span class="arrow">→</span>
+        {{ viaje.destino }}
+      </div>
+      <span class="precio-pill">${{ viaje.precio }}</span>
+    </div>
+
+    <div class="viaje-meta">
+      <span class="viaje-meta-item">📅 <strong>{{ viaje.fecha }}</strong></span>
+      <span class="viaje-meta-item">⏰ <strong>{{ viaje.hora }}</strong></span>
+      <span class="viaje-meta-item">📍 <strong>{{ viaje.encuentro }}</strong></span>
+      <span class="viaje-meta-item">
+        💺&nbsp;
+        {% if viaje.lugares > 0 %}
+          <span class="lugares-badge">{{ viaje.lugares }} lugar{{ 'es' if viaje.lugares > 1 else '' }}</span>
+        {% else %}
+          <span class="lugares-badge agotado">Agotado</span>
+        {% endif %}
+      </span>
+    </div>
+
+    <hr class="viaje-divider">
+
+    <div class="viaje-bottom">
+      <div class="conductor-info">
+        <div class="conductor-label">Conducido por</div>
+        <div class="conductor-name">👤 {{ viaje.nombre }} {{ viaje.apellido }}</div>
+        <div class="conductor-tel">📞 {{ viaje.telefono }}</div>
+      </div>
+
+      {% if viaje.lugares > 0 %}
+        <form action="/reservar/{{ viaje.id }}" method="POST"
+              onsubmit="return confirm('¿Confirmás la reserva para este viaje?');">
+          <button type="submit" class="btn-reservar">Reservar lugar</button>
+        </form>
+      {% else %}
+        <div class="agotado-msg">🚫 Sin asientos disponibles</div>
+      {% endif %}
+    </div>
+
+  </div>
+  {% else %}
+  <div class="empty-viajes">
+    <div class="icon">🔍</div>
+    <h3>No encontramos viajes disponibles</h3>
+    <p>No hay rutas para ese destino o fecha. Probá con otro origen, destino, o revisá más adelante.</p>
+    <a href="/">Volver a buscar</a>
+  </div>
+  {% endfor %}
+
 </div>
-
-<nav class="navbar">
-    <div class="nav-inner">
-        <div class="nav-left">
-            {% if session.user_id %}
-            <button class="hamburger" onclick="openNav()">
-                <span></span><span></span><span></span>
-            </button>
-            {% else %}
-            <a href="/viajes" class="nav-link">Ver viajes</a>
-            {% endif %}
-        </div>
-
-        <a href="/" class="nav-logo">Ruta Compartida</a>
-
-        <div class="nav-right">
-            {% if not session.user_id %}
-            <a href="/login" class="nav-link">Ingresar</a>
-            <a href="/register" class="nav-cta">Registrarse</a>
-            {% else %}
-            <a href="/crear_viaje" class="nav-cta">+ Publicar</a>
-            {% endif %}
-        </div>
-    </div>
-</nav>
-
-<main>
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <div class="flash-wrapper">
-        {% for message in messages %}
-        <div class="flash-msg">{{ message }}</div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% endwith %}
-
-    {% block content %}{% endblock %}
-</main>
-
-<section class="contact-section">
-    <div class="contact-container">
-        <h3>¿Tenés dudas?</h3>
-        <p>Escribinos a <a href="mailto:rutacompartida.soporte@gmail.com">rutacompartida.soporte@gmail.com</a></p>
-    </div>
-</section>
-
-<footer class="main-footer">
-    <div class="footer-content">
-        <div class="footer-logo">
-            <a href="/" class="footer-logo-link">Ruta Compartida</a>
-            <p class="footer-tagline">Viajá seguro, viajá acompañado.</p>
-        </div>
-        <div class="footer-links">
-            <a href="/viajes">Buscar Viajes</a>
-            <a href="/crear_viaje">Publicar viaje</a>
-            <a href="/terminos1">Términos y Condiciones</a>
-            <a href="mailto:rutacompartida.soporte@gmail.com">Contacto</a>
-        </div>
-        <hr class="footer-divider">
-        <div class="footer-bottom">
-            <p>&copy; 2026 Ruta Compartida. Todos los derechos reservados.</p>
-        </div>
-    </div>
-</footer>
-
-<script>
-    function openNav() { document.getElementById("mySidebar").style.width = "250px"; }
-    function closeNav() { document.getElementById("mySidebar").style.width = "0"; }
-</script>
-
-</body>
-</html>
+{% endblock %}
