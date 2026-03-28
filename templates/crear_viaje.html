@@ -1,91 +1,105 @@
-annotated-types==0.7.0
-anyio==4.4.0
-Babel==2.14.0
-bcrypt==4.3.0
-blinker==1.7.0
-cachelib==0.13.0
-cachetools==5.3.3
-certifi==2024.2.2
-cffi==1.16.0
-charset-normalizer==3.3.2
-click==8.1.7
-colorama==0.4.6
-cryptography==43.0.0
-DateTime==5.5
-deprecation==2.1.0
-distlib==0.3.8
-filelock==3.15.4
-Flask==3.0.3
-Flask-Bcrypt==1.0.1
-Flask-MySQLdb==2.0.0
-Flask-Session==0.8.0
-Flask-SQLAlchemy==3.1.1
-flask-talisman==1.1.0
-flask-tunnel==0.1.5
-google-api-core==2.18.0
-google-api-python-client==2.136.0
-google-auth==2.29.0
-google-auth-httplib2==0.2.0
-google-auth-oauthlib==1.2.0
-googleapis-common-protos==1.63.0
-gotrue==2.6.1
-greenlet==3.0.3
-gunicorn==25.1.0
-h11==0.14.0
-h2==4.1.0
-hpack==4.0.0
-httpcore==1.0.5
-httplib2==0.22.0
-httpx==0.27.0
-hyperframe==6.0.1
-idna==3.6
-itsdangerous==2.1.2
-Jinja2==3.1.3
-MarkupSafe==2.1.5
-msgspec==0.19.0
-mysql-connector-python==9.6.0
-mysqlclient==2.2.7
-numpy==2.2.2
-oauthlib==3.2.2
-opencv-python==4.11.0.86
-packaging==24.1
-pillow==10.3.0
-platformdirs==4.2.2
-postgrest==0.16.9
-proto-plus==1.23.0
-protobuf==4.25.3
-psycopg2==2.9.9
-psycopg2-binary==2.9.11
-pyasn1==0.6.0
-pyasn1_modules==0.4.0
-pycparser==2.22
-pydantic==2.8.2
-pydantic_core==2.20.1
-pygame==2.5.2
-pyngrok==7.2.0
-pyparsing==3.1.2
-PySimpleGUI==5.0.4
-python-dateutil==2.9.0.post0
-pytz==2024.1
-PyYAML==6.0.1
-pyzbar==0.1.9
-realtime==1.0.6
-requests==2.31.0
-requests-oauthlib==2.0.0
-rsa==4.9
-setuptools==69.5.1
-six==1.16.0
-sniffio==1.3.1
-SQLAlchemy==2.0.30
-storage3==0.7.7
-StrEnum==0.4.15
-supabase==2.6.0
-supafunc==0.5.1
-tkcalendar==1.6.1
-typing_extensions==4.12.2
-uritemplate==4.1.1
-urllib3==2.2.1
-virtualenv==20.26.3
-websockets==12.0
-Werkzeug==3.0.2
-zope.interface==6.3
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="viajes-page">
+
+  <div class="viajes-header">
+    <h1>🚗 Viajes disponibles</h1>
+    <p>Encontrá tu próximo viaje compartido</p>
+  </div>
+
+  <!-- FILTRO -->
+  <div class="filter-bar">
+    <form action="/buscar" method="GET">
+      <div class="filter-field">
+        <label class="filter-label">Origen</label>
+        <select name="origen" class="filter-select">
+          <option value="">Todos</option>
+          <option value="Leones">Leones</option>
+          <option value="Marcos Juarez">Marcos Juarez</option>
+          <option value="Rosario">Rosario</option>
+          <option value="Cordoba">Córdoba</option>
+          <option value="Villa Maria">Villa María</option>
+          <option value="Bell ville">Bell Ville</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label class="filter-label">Destino</label>
+        <select name="destino" class="filter-select">
+          <option value="">Todos</option>
+          <option value="Leones">Leones</option>
+          <option value="Marcos Juarez">Marcos Juarez</option>
+          <option value="Rosario">Rosario</option>
+          <option value="Cordoba">Córdoba</option>
+          <option value="Villa Maria">Villa María</option>
+          <option value="Bell ville">Bell Ville</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label class="filter-label">Fecha</label>
+        <input type="date" name="fecha" class="filter-date">
+      </div>
+      <button type="submit" class="filter-btn">Filtrar 🔍</button>
+      <a href="/viajes" class="filter-reset">Limpiar</a>
+    </form>
+  </div>
+
+  <!-- LISTADO -->
+  {% for viaje in viajes %}
+  <div class="viaje-card">
+
+    <div class="viaje-top">
+      <div class="viaje-ruta">
+        {{ viaje.origen }}
+        <span class="arrow">→</span>
+        {{ viaje.destino }}
+      </div>
+      <span class="precio-pill">${{ viaje.precio }}</span>
+    </div>
+
+    <div class="viaje-meta">
+      <span class="viaje-meta-item">📅 <strong>{{ viaje.fecha }}</strong></span>
+      <span class="viaje-meta-item">⏰ <strong>{{ viaje.hora }}</strong></span>
+      <span class="viaje-meta-item">📍 <strong>{{ viaje.encuentro }}</strong></span>
+      <span class="viaje-meta-item">
+        💺&nbsp;
+        {% if viaje.lugares > 0 %}
+          <span class="lugares-badge">{{ viaje.lugares }} lugar{{ 'es' if viaje.lugares > 1 else '' }}</span>
+        {% else %}
+          <span class="lugares-badge agotado">Agotado</span>
+        {% endif %}
+      </span>
+    </div>
+
+    <hr class="viaje-divider">
+
+    <div class="viaje-bottom">
+      <div class="conductor-info">
+        <div class="conductor-label">Conducido por</div>
+        <div class="conductor-name">👤 {{ viaje.nombre }} {{ viaje.apellido }}</div>
+        <div class="conductor-tel">📞 {{ viaje.telefono }}</div>
+      </div>
+
+      {% if viaje.lugares > 0 %}
+        <form action="/reservar/{{ viaje.id }}" method="POST"
+              onsubmit="return confirm('¿Confirmás la reserva para este viaje?');">
+          <button type="submit" class="btn-reservar">Reservar lugar</button>
+        </form>
+      {% else %}
+        <div class="agotado-msg">🚫 Sin asientos disponibles</div>
+      {% endif %}
+    </div>
+
+  </div>
+  {% else %}
+  <div class="empty-viajes">
+    <div class="icon">🔍</div>
+    <h3>No encontramos viajes disponibles</h3>
+    <p>No hay rutas para ese destino o fecha. Probá con otro origen, destino, o revisá más adelante.</p>
+    <a href="/">Volver a buscar</a>
+  </div>
+  {% endfor %}
+
+</div>
+{% endblock %}
