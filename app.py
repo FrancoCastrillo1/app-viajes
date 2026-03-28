@@ -492,6 +492,11 @@ def enviar_aviso(email_destino, asunto, mensaje):
     }
     requests.post(url, headers=headers, json=data)
 
+#IR A TERMINOS Y CONDICIONES
+@app.route('/terminos')
+def terminos():
+    return render_template('terminos.html')
+
 
 
 if __name__ == "__main__":
