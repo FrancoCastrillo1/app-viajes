@@ -1,105 +1,274 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
 
-<div class="viajes-page">
+.crear-wrapper {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 52px 20px 80px;
+}
 
-  <div class="viajes-header">
-    <h1>🚗 Viajes disponibles</h1>
-    <p>Encontrá tu próximo viaje compartido</p>
+/* HEADER */
+.crear-header {
+  margin-bottom: 36px;
+}
+.crear-header h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 8px;
+}
+.crear-header p {
+  color: #9CA3AF;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* CARD */
+.crear-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 40px 42px;
+  border: 1.5px solid #F3E8DC;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.08);
+}
+
+/* FORM */
+.crear-form {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 22px !important;
+}
+.crear-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.crear-field { display: flex; flex-direction: column; gap: 8px; }
+.crear-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: #6B7280;
+}
+.crear-input, .crear-select {
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1.5px solid #E5E7EB;
+  background: #FAFAFA;
+  font-size: 0.97rem;
+  color: #1F2937;
+  font-family: inherit;
+  box-sizing: border-box;
+  appearance: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+.crear-input:focus, .crear-select:focus {
+  outline: none;
+  border-color: #E76F51;
+  box-shadow: 0 0 0 3px rgba(231,111,81,0.1);
+  background: #fff;
+}
+.select-wrap { position: relative; }
+.select-wrap .chevron {
+  position: absolute;
+  right: 14px; top: 50%;
+  transform: translateY(-50%);
+  color: #9CA3AF;
+  font-size: 0.75rem;
+  pointer-events: none;
+}
+
+/* ROUTE VISUAL */
+.route-visual {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: -6px;
+}
+.route-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #E76F51;
+  flex-shrink: 0;
+}
+.route-dot.dest { background: #1a1a2e; }
+.route-line {
+  width: 2px; height: 18px;
+  background: linear-gradient(180deg, #E76F51, #1a1a2e);
+  margin: 0 0 0 4px;
+}
+
+/* SECTION LABEL */
+.section-sep {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 -4px;
+}
+.section-sep span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #D1D5DB;
+  white-space: nowrap;
+}
+.section-sep::before, .section-sep::after {
+  content: ''; flex: 1; height: 1px; background: #F3E8DC;
+}
+
+/* BTN */
+.btn-publicar {
+  width: 100%;
+  padding: 17px;
+  background: linear-gradient(135deg, #E76F51, #D85D41);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.08rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(231,111,81,0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 6px;
+}
+.btn-publicar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(231,111,81,0.42);
+}
+
+/* BADGE VERIFICADO */
+.verificado-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #ECFDF5;
+  border: 1.5px solid #A7F3D0;
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-top: 20px;
+}
+.verificado-banner .check { font-size: 1.4rem; flex-shrink: 0; }
+.verificado-banner h4 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #065F46;
+  margin: 0 0 3px;
+}
+.verificado-banner p {
+  font-size: 0.82rem;
+  color: #059669;
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .crear-card { padding: 28px 20px; }
+  .crear-row { grid-template-columns: 1fr; }
+  .crear-wrapper { padding: 36px 14px 60px; }
+}
+</style>
+
+<div class="crear-wrapper">
+
+  <div class="crear-header">
+    <h1>🚗 Publicá tu viaje</h1>
+    <p>Completá los datos y empezá a recibir pasajeros</p>
   </div>
 
-  <!-- FILTRO -->
-  <div class="filter-bar">
-    <form action="/buscar" method="GET">
-      <div class="filter-field">
-        <label class="filter-label">Origen</label>
-        <select name="origen" class="filter-select">
-          <option value="">Todos</option>
-          <option value="Leones">Leones</option>
-          <option value="Marcos Juarez">Marcos Juarez</option>
-          <option value="Rosario">Rosario</option>
-          <option value="Cordoba">Córdoba</option>
-          <option value="Villa Maria">Villa María</option>
-          <option value="Bell ville">Bell Ville</option>
-        </select>
+  <div class="crear-card">
+    <form method="POST" class="crear-form">
+
+      <!-- RUTA -->
+      <div class="section-sep"><span>Ruta</span></div>
+
+      <div class="crear-row">
+        <div class="crear-field">
+          <label class="crear-label">📍 Origen</label>
+          <div class="select-wrap">
+            <select name="origen" class="crear-select" required>
+              <option value="" disabled selected>Seleccioná</option>
+              <option value="Leones">Leones</option>
+              <option value="Marcos Juarez">Marcos Juarez</option>
+              <option value="Rosario">Rosario</option>
+              <option value="Cordoba">Córdoba</option>
+              <option value="Villa Maria">Villa María</option>
+              <option value="Bell ville">Bell Ville</option>
+            </select>
+            <span class="chevron">↓</span>
+          </div>
+        </div>
+        <div class="crear-field">
+          <label class="crear-label">🏁 Destino</label>
+          <div class="select-wrap">
+            <select name="destino" class="crear-select" required>
+              <option value="" disabled selected>Seleccioná</option>
+              <option value="Leones">Leones</option>
+              <option value="Marcos Juarez">Marcos Juarez</option>
+              <option value="Rosario">Rosario</option>
+              <option value="Cordoba">Córdoba</option>
+              <option value="Villa Maria">Villa María</option>
+              <option value="Bell ville">Bell Ville</option>
+            </select>
+            <span class="chevron">↓</span>
+          </div>
+        </div>
       </div>
-      <div class="filter-field">
-        <label class="filter-label">Destino</label>
-        <select name="destino" class="filter-select">
-          <option value="">Todos</option>
-          <option value="Leones">Leones</option>
-          <option value="Marcos Juarez">Marcos Juarez</option>
-          <option value="Rosario">Rosario</option>
-          <option value="Cordoba">Córdoba</option>
-          <option value="Villa Maria">Villa María</option>
-          <option value="Bell ville">Bell Ville</option>
-        </select>
+
+      <!-- FECHA Y HORA -->
+      <div class="section-sep"><span>Fecha y hora</span></div>
+
+      <div class="crear-row">
+        <div class="crear-field">
+          <label class="crear-label">📅 Fecha</label>
+          <input type="date" name="fecha" class="crear-input" min="{{ fecha_hoy }}" required>
+        </div>
+        <div class="crear-field">
+          <label class="crear-label">⏰ Hora de salida</label>
+          <input type="time" name="hora" class="crear-input" required>
+        </div>
       </div>
-      <div class="filter-field">
-        <label class="filter-label">Fecha</label>
-        <input type="date" name="fecha" class="filter-date">
+
+      <!-- DETALLES -->
+      <div class="section-sep"><span>Detalles</span></div>
+
+      <div class="crear-row">
+        <div class="crear-field">
+          <label class="crear-label">🪑 Lugares disponibles</label>
+          <input type="number" name="lugares" class="crear-input"
+                 placeholder="Ej: 3" min="1" max="8" required>
+        </div>
+        <div class="crear-field">
+          <label class="crear-label">💵 Precio por persona</label>
+          <input type="number" step="0.01" name="precio" class="crear-input"
+                 placeholder="$ ARS" min="0" required>
+        </div>
       </div>
-      <button type="submit" class="filter-btn">Filtrar 🔍</button>
-      <a href="/viajes" class="filter-reset">Limpiar</a>
+
+      <div class="crear-field">
+        <label class="crear-label">🤝 Punto de encuentro</label>
+        <input type="text" name="encuentro" class="crear-input"
+               placeholder="Ej: Estación Shell, esquina Ruta 11 y Av. San Martín" required>
+      </div>
+
+      <button type="submit" class="btn-publicar">Publicar viaje →</button>
+
     </form>
-  </div>
 
-  <!-- LISTADO -->
-  {% for viaje in viajes %}
-  <div class="viaje-card">
-
-    <div class="viaje-top">
-      <div class="viaje-ruta">
-        {{ viaje.origen }}
-        <span class="arrow">→</span>
-        {{ viaje.destino }}
+    <div class="verificado-banner">
+      <span class="check">✅</span>
+      <div>
+        <h4>Conductor verificado</h4>
+        <p>Los pasajeros ven tu cuenta verificada y confían más en tu viaje.</p>
       </div>
-      <span class="precio-pill">${{ viaje.precio }}</span>
     </div>
-
-    <div class="viaje-meta">
-      <span class="viaje-meta-item">📅 <strong>{{ viaje.fecha }}</strong></span>
-      <span class="viaje-meta-item">⏰ <strong>{{ viaje.hora }}</strong></span>
-      <span class="viaje-meta-item">📍 <strong>{{ viaje.encuentro }}</strong></span>
-      <span class="viaje-meta-item">
-        💺&nbsp;
-        {% if viaje.lugares > 0 %}
-          <span class="lugares-badge">{{ viaje.lugares }} lugar{{ 'es' if viaje.lugares > 1 else '' }}</span>
-        {% else %}
-          <span class="lugares-badge agotado">Agotado</span>
-        {% endif %}
-      </span>
-    </div>
-
-    <hr class="viaje-divider">
-
-    <div class="viaje-bottom">
-      <div class="conductor-info">
-        <div class="conductor-label">Conducido por</div>
-        <div class="conductor-name">👤 {{ viaje.nombre }} {{ viaje.apellido }}</div>
-        <div class="conductor-tel">📞 {{ viaje.telefono }}</div>
-      </div>
-
-      {% if viaje.lugares > 0 %}
-        <form action="/reservar/{{ viaje.id }}" method="POST"
-              onsubmit="return confirm('¿Confirmás la reserva para este viaje?');">
-          <button type="submit" class="btn-reservar">Reservar lugar</button>
-        </form>
-      {% else %}
-        <div class="agotado-msg">🚫 Sin asientos disponibles</div>
-      {% endif %}
-    </div>
-
   </div>
-  {% else %}
-  <div class="empty-viajes">
-    <div class="icon">🔍</div>
-    <h3>No encontramos viajes disponibles</h3>
-    <p>No hay rutas para ese destino o fecha. Probá con otro origen, destino, o revisá más adelante.</p>
-    <a href="/">Volver a buscar</a>
-  </div>
-  {% endfor %}
 
 </div>
 {% endblock %}
