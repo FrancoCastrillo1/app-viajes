@@ -1,32 +1,193 @@
 {% extends "base.html" %}
+
 {% block content %}
-<div class="container">
-    <div class="card" style="max-width: 450px; margin: 60px auto; text-align: center;">
-        <h2 style="margin-bottom: 10px;">Confirma tu identidad</h2>
-        <p style="color: #666; margin-bottom: 30px;">
-            Te enviamos un código de verificación a tu correo. Por favor, ingrésalo para continuar.
-        </p>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
 
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for message in messages %}
-              <p style="color: #e74c3c; font-weight: bold; margin-bottom: 15px;">{{ message }}</p>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
+.auth-wrapper {
+  min-height: calc(100vh - 64px - 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  background: linear-gradient(160deg, #FFF7ED 0%, #fff 60%);
+}
+.auth-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 48px 44px;
+  width: 100%;
+  max-width: 460px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.1), 0 4px 16px rgba(231,111,81,0.07);
+  border: 1.5px solid #F3E8DC;
+}
+.auth-logo {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.auth-logo-text {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #E76F51;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 6px;
+}
+.auth-logo p { font-size: 0.85rem; color: #9CA3AF; margin: 0; }
+.auth-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 8px;
+  text-align: center;
+}
+.auth-subtitle {
+  text-align: center;
+  color: #9CA3AF;
+  font-size: 0.9rem;
+  margin: 0 0 32px;
+}
+.auth-form {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+.auth-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.auth-field { display: flex; flex-direction: column; gap: 7px; }
+.auth-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: #6B7280;
+}
+.auth-input {
+  padding: 13px 16px;
+  border-radius: 12px;
+  border: 1.5px solid #E5E7EB;
+  background: #FAFAFA;
+  font-size: 0.97rem;
+  color: #1F2937;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+.auth-input:focus {
+  outline: none;
+  border-color: #E76F51;
+  box-shadow: 0 0 0 3px rgba(231,111,81,0.1);
+  background: #fff;
+}
+.btn-auth {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #E76F51, #D85D41);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(231,111,81,0.32);
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 6px;
+}
+.btn-auth:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(231,111,81,0.4);
+}
+.auth-terms {
+  font-size: 0.8rem;
+  color: #9CA3AF;
+  text-align: center;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+.auth-terms a { color: #E76F51; text-decoration: none; font-weight: 600; }
+.auth-footer {
+  text-align: center;
+  margin-top: 22px;
+  font-size: 0.9rem;
+  color: #6B7280;
+}
+.auth-footer a { color: #E76F51; font-weight: 600; text-decoration: none; }
+.auth-footer a:hover { text-decoration: underline; }
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 6px 0;
+}
+.auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: #F3E8DC; }
+.auth-divider span { color: #D1D5DB; font-size: 0.8rem; }
 
-        <form action="/verificar" method="POST">
-            <input type="text" name="codigo" placeholder="Ej: 123456" required 
-                   style="font-size: 28px; text-align: center; letter-spacing: 8px; border: 2px solid #E76F51;">
-            
-            <button type="submit" style="width: 100%; height: 50px; font-size: 18px; margin-top: 15px;">
-                Activar mi cuenta
-            </button>
-        </form>
-        
-        <p style="margin-top: 25px; font-size: 14px;">
-            ¿No recibiste nada? Revisa tu carpeta de <b>SPAM</b>.
-        </p>
+@media (max-width: 480px) {
+  .auth-card { padding: 36px 22px; }
+  .auth-row { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <a href="/" class="auth-logo-text">Ruta Compartida</a>
+      <p>Viajá seguro, viajá acompañado</p>
     </div>
+
+    <h1 class="auth-title">Creá tu cuenta</h1>
+    <p class="auth-subtitle">Es gratis y solo toma un minuto</p>
+
+    <form method="POST" class="auth-form">
+
+      <div class="auth-row">
+        <div class="auth-field">
+          <label class="auth-label">Nombre</label>
+          <input type="text" name="nombre" class="auth-input" placeholder="Juan" required>
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Apellido</label>
+          <input type="text" name="apellido" class="auth-input" placeholder="García" required>
+        </div>
+      </div>
+
+      <div class="auth-field">
+        <label class="auth-label">Teléfono</label>
+        <input type="text" name="telefono" class="auth-input" placeholder="Ej: 3571 123456" required>
+      </div>
+
+      <div class="auth-field">
+        <label class="auth-label">Email</label>
+        <input type="email" name="email" class="auth-input" placeholder="tu@email.com" required>
+      </div>
+
+      <div class="auth-field">
+        <label class="auth-label">Contraseña</label>
+        <input type="password" name="password" class="auth-input" placeholder="Mínimo 6 caracteres" required>
+      </div>
+
+      <button type="submit" class="btn-auth">Crear cuenta →</button>
+
+      <p class="auth-terms">
+        Al registrarte aceptás nuestros
+        <a href="/terminos">Términos y Condiciones</a>
+      </p>
+    </form>
+
+    <div class="auth-divider"><span>o</span></div>
+
+    <div class="auth-footer">
+      ¿Ya tenés cuenta? <a href="/login">Iniciá sesión</a>
+    </div>
+
+  </div>
 </div>
 {% endblock %}
