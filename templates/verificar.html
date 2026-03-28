@@ -1,32 +1,117 @@
 {% extends "base.html" %}
+
 {% block content %}
-<div class="container">
-    <div class="card" style="max-width: 450px; margin: 60px auto; text-align: center;">
-        <h2 style="margin-bottom: 10px;">Confirma tu identidad</h2>
-        <p style="color: #666; margin-bottom: 30px;">
-            Te enviamos un código de verificación a tu correo. Por favor, ingrésalo para continuar.
-        </p>
 
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for message in messages %}
-              <p style="color: #e74c3c; font-weight: bold; margin-bottom: 15px;">{{ message }}</p>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
+<div class="perfil-page">
 
-        <form action="/verificar" method="POST">
-            <input type="text" name="codigo" placeholder="Ej: 123456" required 
-                   style="font-size: 28px; text-align: center; letter-spacing: 8px; border: 2px solid #E76F51;">
-            
-            <button type="submit" style="width: 100%; height: 50px; font-size: 18px; margin-top: 15px;">
-                Activar mi cuenta
-            </button>
-        </form>
-        
-        <p style="margin-top: 25px; font-size: 14px;">
-            ¿No recibiste nada? Revisa tu carpeta de <b>SPAM</b>.
-        </p>
+  <!-- HEADER DE PERFIL -->
+  <div class="perfil-header">
+    <div class="perfil-avatar">{{ user.nombre[0] | upper }}</div>
+    <div class="perfil-info-main">
+      <h1 class="perfil-name">{{ user.nombre }} {{ user.apellido }}</h1>
+      <div class="perfil-meta">
+        <span class="perfil-meta-item">✉️ {{ user.email }}</span>
+        <span class="perfil-meta-item">📞 {{ user.telefono }}</span>
+      </div>
     </div>
+    <div class="stat-badges">
+      <div class="stat-badge">
+        <span class="stat-num">{{ cantidad_viajes }}</span>
+        <span class="stat-label">Viajes publicados</span>
+      </div>
+      <div class="stat-badge">
+        <span class="stat-num">{{ mis_reservas | length }}</span>
+        <span class="stat-label">Reservas activas</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MIS VIAJES PUBLICADOS -->
+  <h2 class="section-title">🚗 Mis viajes publicados</h2>
+
+  {% for viaje in viajes %}
+  <div class="viaje-card">
+    <div class="viaje-ruta">
+      {{ viaje.origen }} <span>→</span> {{ viaje.destino }}
+    </div>
+
+    <span class="precio-badge">${{ viaje.precio }}</span>
+
+    <div class="viaje-details">
+      <span class="viaje-detail">📅 <strong>{{ viaje.fecha }}</strong></span>
+      <span class="viaje-detail">⏰ <strong>{{ viaje.hora }}</strong></span>
+      <span class="viaje-detail">💺 <strong>{{ viaje.lugares }}</strong> lugar{{ 'es' if viaje.lugares != 1 else '' }} disponible{{ 's' if viaje.lugares != 1 else '' }}</span>
+    </div>
+
+    <div class="pasajeros-list">
+      <h4>Pasajeros confirmados</h4>
+      <ul>
+        {% set tiene_pasajeros = namespace(value=false) %}
+        {% for reserva in reservas %}
+          {% if reserva.viaje_id == viaje.id %}
+            {% set tiene_pasajeros.value = true %}
+            <li>{{ reserva.nombre }} {{ reserva.apellido }}</li>
+          {% endif %}
+        {% endfor %}
+        {% if not tiene_pasajeros.value %}
+          <li class="no-pasajeros">Aún no hay pasajeros para este viaje.</li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <div class="card-actions">
+      <form action="/cancelar_viaje/{{ viaje.id }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar esta publicación?');">
+        <button type="submit" class="btn-danger">🗑️ Eliminar publicación</button>
+      </form>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🚗</div>
+    <p>Todavía no publicaste ningún viaje.</p>
+    <a href="/crear_viaje">Publicar mi primer viaje</a>
+  </div>
+  {% endfor %}
+
+  <!-- MIS RESERVAS -->
+  <h2 class="section-title">🎫 Viajes que reservé</h2>
+
+  {% for reserva in mis_reservas %}
+  <div class="reserva-card">
+    <div class="viaje-ruta">
+      {{ reserva.origen }} <span>→</span> {{ reserva.destino }}
+    </div>
+
+    <span class="precio-badge">${{ reserva.precio }}</span>
+
+    <div class="viaje-details">
+      <span class="viaje-detail">📅 <strong>{{ reserva.fecha }}</strong></span>
+      <span class="viaje-detail">⏰ <strong>{{ reserva.hora }}</strong></span>
+    </div>
+
+    <div class="conductor-info">
+      👤 <strong>Conductor:</strong> {{ reserva.conductor_nombre }} {{ reserva.conductor_apellido }}
+    </div>
+
+    <div class="card-actions">
+      <a href="https://wa.me/{{ reserva.conductor_telefono }}?text=Hola%20{{ reserva.conductor_nombre }},%20te%20escribo%20por%20el%20viaje%20a%20{{ reserva.destino }}%20desde%20Ruta%20Compartida"
+         target="_blank" class="btn-whatsapp">
+        💬 WhatsApp del conductor
+      </a>
+      <form action="/cancelar_reserva/{{ reserva.reserva_id }}" method="POST" onsubmit="return confirm('¿Cancelás tu lugar en este viaje?');">
+        <button type="submit" class="btn-danger">✕ Cancelar mi lugar</button>
+      </form>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🔍</div>
+    <p>Todavía no reservaste ningún viaje.</p>
+    <a href="/viajes">Buscar viajes disponibles</a>
+  </div>
+  {% endfor %}
+
 </div>
 {% endblock %}
