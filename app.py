@@ -497,6 +497,25 @@ def enviar_aviso(email_destino, asunto, mensaje):
 def terminos():
     return render_template('terminos.html')
 
+@app.route("/viajes/<int:viaje_id>")
+def ver_viaje(viaje_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        cursor.execute("""
+            SELECT viajes.*, users.nombre, users.apellido, users.telefono
+            FROM viajes
+            JOIN users ON viajes.user_id = users.id
+            WHERE viajes.id = %s
+        """, (viaje_id,))
+        viaje = cursor.fetchone()
+        if not viaje:
+            return redirect("/viajes")
+        return render_template("ver_viaje.html", viaje=viaje)
+    finally:
+        cursor.close()
+        conn.close()
+
 
 
 if __name__ == "__main__":
