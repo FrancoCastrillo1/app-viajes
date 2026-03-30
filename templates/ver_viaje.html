@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="crear-wrapper">
+
+  <div class="crear-header">
+    <h1>🚗 {{ viaje.origen }} → {{ viaje.destino }}</h1>
+    <p>Detalle del viaje compartido</p>
+  </div>
+
+  <div class="crear-card">
+
+    <div class="viaje-meta" style="margin-bottom: 24px;">
+      <span class="viaje-meta-item">📅 <strong>{{ viaje.fecha }}</strong></span>
+      <span class="viaje-meta-item">⏰ <strong>{{ viaje.hora }}</strong></span>
+      <span class="viaje-meta-item">📍 <strong>{{ viaje.encuentro }}</strong></span>
+      <span class="viaje-meta-item">💺
+        {% if viaje.lugares > 0 %}
+          <span class="lugares-badge">{{ viaje.lugares }} lugar{{ 'es' if viaje.lugares > 1 else '' }}</span>
+        {% else %}
+          <span class="lugares-badge agotado">Agotado</span>
+        {% endif %}
+      </span>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <div class="conductor-label">Conducido por</div>
+        <div class="conductor-name">👤 {{ viaje.nombre }} {{ viaje.apellido }}</div>
+        <div class="conductor-tel">📞 {{ viaje.telefono }}</div>
+      </div>
+      <span class="precio-pill">${{ viaje.precio }}</span>
+    </div>
+
+    <hr class="viaje-divider">
+
+    {% if viaje.lugares > 0 %}
+      {% if session.user_id %}
+        <form action="/reservar/{{ viaje.id }}" method="POST"
+              onsubmit="return confirm('¿Confirmás la reserva para este viaje?');">
+          <button type="submit" class="btn-reservar" style="width:100%;">Reservar lugar</button>
+        </form>
+      {% else %}
+        <a href="/register" class="btn-reservar" style="display:block; text-align:center; text-decoration:none; padding: 13px 28px;">
+          Registrate para reservar
+        </a>
+      {% endif %}
+    {% else %}
+      <div class="agotado-msg">🚫 Sin asientos disponibles</div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}
