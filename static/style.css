@@ -646,6 +646,36 @@ form { display: block; gap: unset; }
   .step-divider { display: none; }
   .social-inner, .trust-inner { flex-direction: column; gap: 40px; }
   .social-img-badge { font-size: 0.78rem; padding: 8px 14px; }
+
+   .field-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinea etiquetas a la izquierda */
+  }
+
+  /* Asegura que el input/select ocupe el 100% de su contenedor */
+  .select-wrap, 
+  .select-wrap select, 
+  .date-input {
+    width: 100% !important;
+    box-sizing: border-box; /* Para que el padding no rompa el ancho */
+  }
+
+  /* Centra la tarjeta y ajusta márgenes */
+  .search-card {
+    padding: 28px 22px;
+    margin: 0 15px; /* Un pequeño margen exterior para que no toque los bordes del celular */
+    width: auto; /* Permite que el margen lateral funcione */
+  }
+
+  /* Mejora el botón para que sea más imponente en móvil */
+  .btn-search {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+   
 }
 
 @media (max-width: 640px) {
