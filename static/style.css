@@ -646,7 +646,6 @@ form { display: block; gap: unset; }
   .step-divider { display: none; }
   .social-inner, .trust-inner { flex-direction: column; gap: 40px; }
   .social-img-badge { font-size: 0.78rem; padding: 8px 14px; }
-   .hero-photo {display: none;}
 
    .field-group {
     width: 100%;
@@ -683,7 +682,6 @@ form { display: block; gap: unset; }
   .perfil-header { flex-direction: column; text-align: center; padding: 28px 24px; }
   .perfil-meta { justify-content: center; }
   .stat-badges { justify-content: center; }
-   .hero-photo {display: none;}
 }
 
 @media (max-width: 600px) {
@@ -706,5 +704,4 @@ form { display: block; gap: unset; }
   .crear-card { padding: 28px 20px; }
   .crear-row { grid-template-columns: 1fr; }
   .crear-wrapper { padding: 36px 14px 60px; }
-   .hero-photo {display: none;}
 }
