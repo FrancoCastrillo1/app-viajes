@@ -646,42 +646,13 @@ form { display: block; gap: unset; }
   .step-divider { display: none; }
   .social-inner, .trust-inner { flex-direction: column; gap: 40px; }
   .social-img-badge { font-size: 0.78rem; padding: 8px 14px; }
-  .hero-photo {display: none;}
-   .field-group {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* Alinea etiquetas a la izquierda */
-  }
-
-  /* Asegura que el input/select ocupe el 100% de su contenedor */
-  .select-wrap, 
-  .select-wrap select, 
-  .date-input {
-    width: 100% !important;
-    box-sizing: border-box; /* Para que el padding no rompa el ancho */
-  }
-
-  /* Centra la tarjeta y ajusta márgenes */
-  .search-card {
-    padding: 28px 22px;
-    margin: 0 15px; /* Un pequeño margen exterior para que no toque los bordes del celular */
-    width: auto; /* Permite que el margen lateral funcione */
-  }
-
-  /* Mejora el botón para que sea más imponente en móvil */
-  .btn-search {
-    width: 100%;
-    margin-top: 10px;
-  }
-}
-   
 }
 
 @media (max-width: 640px) {
   .perfil-header { flex-direction: column; text-align: center; padding: 28px 24px; }
   .perfil-meta { justify-content: center; }
   .stat-badges { justify-content: center; }
+  .hero-photo {display: none;}
 }
 
 @media (max-width: 600px) {
@@ -705,3 +676,236 @@ form { display: block; gap: unset; }
   .crear-row { grid-template-columns: 1fr; }
   .crear-wrapper { padding: 36px 14px 60px; }
 }
+
+/* ============================================================
+   PERFIL — MEJORAS (avatar, rating, tabs, estados, reseñas)
+   ============================================================ */
+
+/* Avatar con imagen */
+.perfil-avatar-wrap { flex-shrink: 0; }
+.perfil-avatar-img {
+  width: 72px; height: 72px; border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255,255,255,0.25);
+  box-shadow: 0 8px 24px rgba(231,111,81,0.4);
+}
+
+/* Rating en header */
+.perfil-rating {
+  display: flex; align-items: center; gap: 8px;
+  margin: 6px 0 8px;
+}
+.stars-static { font-size: 1rem; letter-spacing: 1px; }
+.rating-num { font-size: 0.9rem; font-weight: 700; color: var(--primary-light); }
+.rating-count { font-size: 0.8rem; color: rgba(255,255,255,0.45); }
+
+/* Header right (stats + editar) */
+.perfil-header-right {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 12px; flex-shrink: 0;
+}
+
+/* Botón editar perfil */
+.btn-editar-perfil {
+  display: inline-block;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.85);
+  padding: 8px 18px; border-radius: var(--radius-sm);
+  text-decoration: none; font-size: 0.87rem; font-weight: 600;
+  transition: background 0.2s;
+}
+.btn-editar-perfil:hover { background: rgba(255,255,255,0.2); color: var(--white); }
+
+/* TABS */
+.perfil-tabs {
+  display: flex; gap: 4px;
+  background: var(--white); border: 1.5px solid var(--cream-border);
+  border-radius: var(--radius-md); padding: 5px;
+  margin-bottom: 28px; overflow-x: auto;
+}
+.tab-btn {
+  flex: 1; padding: 10px 16px;
+  border: none; background: transparent;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans); font-size: 0.88rem; font-weight: 600;
+  color: var(--gray-500); cursor: pointer; white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+}
+.tab-btn.active {
+  background: var(--primary); color: var(--white);
+  box-shadow: 0 4px 10px rgba(231,111,81,0.28);
+}
+.tab-btn:hover:not(.active) { background: var(--cream); color: var(--primary); }
+.hidden { display: none !important; }
+
+/* ESTADO BADGE */
+.estado-row {
+  display: flex; align-items: center; gap: 12px;
+  margin: 12px 0; flex-wrap: wrap;
+}
+.estado-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 14px; border-radius: var(--radius-full);
+  font-size: 0.82rem; font-weight: 700;
+}
+.estado-pendiente { background: #FEF9C3; color: #854D0E; border: 1px solid #FDE68A; }
+.estado-en-viaje  { background: #DBEAFE; color: #1D4ED8; border: 1px solid #BFDBFE; }
+.estado-finalizado { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+
+.estado-controls { display: flex; gap: 8px; }
+.btn-estado {
+  border: none; padding: 7px 14px; border-radius: 8px;
+  font-family: var(--font-sans); font-size: 0.82rem; font-weight: 700; cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-estado:hover { transform: translateY(-1px); }
+.btn-iniciar  { background: #DBEAFE; color: #1D4ED8; border: 1px solid #BFDBFE; }
+.btn-iniciar:hover  { background: #BFDBFE; }
+.btn-finalizar { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+.btn-finalizar:hover { background: #A7F3D0; }
+
+/* Conductor info en reservas */
+.conductor-info-box {
+  background: var(--cream); border-radius: var(--radius-md);
+  padding: 12px 16px; margin: 12px 0;
+}
+.conductor-link {
+  color: var(--gray-800); text-decoration: none; font-size: 0.95rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.conductor-link:hover { color: var(--primary); }
+
+/* Pasajero link */
+.pasajero-link { color: var(--gray-700); text-decoration: none; font-weight: 600; }
+.pasajero-link:hover { color: var(--primary); }
+
+/* Botón calificar inline */
+.btn-resena-inline {
+  background: #FEF9C3; color: #854D0E; border: 1px solid #FDE68A;
+  padding: 3px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; margin-left: 8px; font-family: var(--font-sans);
+  transition: background 0.2s;
+}
+.btn-resena-inline:hover { background: #FDE68A; }
+.btn-resena-accion {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #FEF9C3; color: #854D0E; border: 1px solid #FDE68A;
+  padding: 10px 16px; border-radius: var(--radius-sm);
+  font-size: 0.88rem; font-weight: 600; cursor: pointer;
+  font-family: var(--font-sans); transition: background 0.2s;
+}
+.btn-resena-accion:hover { background: #FDE68A; }
+
+/* RESEÑA CARD */
+.resena-card {
+  background: var(--white); border: 1.5px solid var(--cream-border);
+  border-radius: var(--radius-md); padding: 20px 24px; margin-bottom: 14px;
+}
+.resena-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px; flex-wrap: wrap; gap: 8px;
+}
+.resena-autor { font-weight: 700; font-size: 0.92rem; color: var(--gray-700); }
+.resena-estrellas { font-size: 1.05rem; letter-spacing: 1px; }
+.resena-comentario {
+  font-size: 0.92rem; color: var(--gray-500); line-height: 1.6;
+  font-style: italic; margin: 0 0 10px; border-left: 3px solid var(--cream-deep);
+  padding-left: 12px;
+}
+.resena-fecha { font-size: 0.78rem; color: var(--gray-300); }
+
+/* MODAL RESEÑA */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9000; padding: 20px;
+}
+.modal-box {
+  background: var(--white); border-radius: var(--radius-xl);
+  padding: 36px 32px; max-width: 440px; width: 100%;
+  position: relative; box-shadow: var(--shadow-xl);
+}
+.modal-close {
+  position: absolute; top: 14px; right: 18px;
+  background: none; border: none; font-size: 1.3rem;
+  color: var(--gray-400); cursor: pointer;
+}
+.modal-close:hover { color: var(--gray-700); }
+.modal-title {
+  font-family: var(--font-serif); font-size: 1.3rem;
+  color: var(--dark); margin: 0 0 24px; text-align: center;
+}
+
+/* Stars input (RTL trick para CSS-only hover) */
+.stars-input {
+  display: flex; flex-direction: row-reverse; justify-content: center;
+  gap: 4px; margin-bottom: 20px;
+}
+.stars-input input[type="radio"] { display: none; }
+.stars-input label {
+  font-size: 2.2rem; cursor: pointer; color: var(--gray-200);
+  transition: color 0.15s;
+}
+.stars-input label:hover,
+.stars-input label:hover ~ label,
+.stars-input input[type="radio"]:checked ~ label { color: #F59E0B; }
+
+.resena-textarea {
+  width: 100%; min-height: 90px; padding: 12px 14px;
+  border: 1.5px solid var(--gray-200); border-radius: var(--radius-md);
+  font-family: var(--font-sans); font-size: 0.95rem; color: var(--gray-800);
+  resize: vertical; box-sizing: border-box; margin-bottom: 18px;
+  transition: border-color 0.2s;
+}
+.resena-textarea:focus { outline: none; border-color: var(--primary); }
+
+/* EDITAR PERFIL — avatar upload */
+.avatar-upload-wrap {
+  display: flex; align-items: center; gap: 24px; margin-bottom: 8px;
+}
+.avatar-preview {
+  width: 80px; height: 80px; border-radius: 50%;
+  object-fit: cover; border: 3px solid var(--cream-deep);
+}
+.avatar-preview-placeholder {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; font-weight: 700; color: white;
+  border: 3px solid var(--cream-deep);
+}
+.btn-avatar-upload {
+  display: inline-block; background: var(--cream); border: 1.5px solid var(--cream-deep);
+  color: var(--primary); font-weight: 700; font-size: 0.9rem;
+  padding: 9px 18px; border-radius: var(--radius-sm); cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-avatar-upload:hover { background: var(--cream-deep); }
+.avatar-hint { font-size: 0.78rem; color: var(--gray-400); margin: 6px 0 0; }
+
+/* Estrella promedio en tarjetas de viaje */
+.viaje-conductor-rating {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 0.82rem; color: var(--gray-500); margin-top: 4px;
+}
+.mini-stars { color: #F59E0B; letter-spacing: 1px; font-size: 0.82rem; }
+
+/* ============================================================
+   RESPONSIVE EXTRAS
+   ============================================================ */
+@media (max-width: 640px) {
+  .perfil-header { flex-direction: column; align-items: center; text-align: center; padding: 28px 22px; }
+  .perfil-header-right { align-items: center; }
+  .perfil-meta { justify-content: center; }
+  .stat-badges { justify-content: center; }
+  .perfil-tabs { gap: 2px; }
+  .tab-btn { font-size: 0.78rem; padding: 9px 10px; }
+  .estado-row { flex-direction: column; align-items: flex-start; }
+  .modal-box { padding: 28px 20px; }
+  .stars-input label { font-size: 1.9rem; }
+  .resena-header { flex-direction: column; align-items: flex-start; }
+  .avatar-upload-wrap { flex-direction: column; align-items: flex-start; }
+}
+.conductor-name-link { color: var(--gray-800); text-decoration: none; font-weight: 700; }
+.conductor-name-link:hover { color: var(--primary); text-decoration: underline; }
