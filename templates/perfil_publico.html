@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="perfil-page">
+
+  <!-- HEADER PÚBLICO -->
+  <div class="perfil-header">
+    <div class="perfil-avatar-wrap">
+      {% if user.avatar_data %}
+        <img src="{{ user.avatar_data }}" alt="Avatar" class="perfil-avatar-img">
+      {% else %}
+        <div class="perfil-avatar">{{ user.nombre[0]|upper }}</div>
+      {% endif %}
+    </div>
+    <div class="perfil-info-main">
+      <h1 class="perfil-name">{{ user.nombre }} {{ user.apellido }}</h1>
+      {% if promedio %}
+      <div class="perfil-rating">
+        <span class="stars-static">
+          {% for i in range(1, 6) %}{% if i <= promedio %}⭐{% else %}☆{% endif %}{% endfor %}
+        </span>
+        <span class="rating-num">{{ promedio }}/5</span>
+        <span class="rating-count">({{ resenas|length }} reseña{{ 's' if resenas|length != 1 else '' }})</span>
+      </div>
+      {% else %}
+      <p style="color:rgba(255,255,255,0.5);font-size:0.9rem;margin:4px 0 0;">Sin calificaciones aún</p>
+      {% endif %}
+    </div>
+    <div class="stat-badges">
+      <div class="stat-badge">
+        <span class="stat-num">{{ viajes|length }}</span>
+        <span class="stat-label">Viajes</span>
+      </div>
+      <div class="stat-badge">
+        <span class="stat-num">{{ resenas|length }}</span>
+        <span class="stat-label">Reseñas</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIAJES DEL USUARIO -->
+  <h2 class="section-title">🚗 Viajes de {{ user.nombre }}</h2>
+  {% for viaje in viajes %}
+  <div class="viaje-card">
+    <div class="viaje-top">
+      <div class="viaje-ruta">{{ viaje.origen }} <span>→</span> {{ viaje.destino }}</div>
+      <span class="precio-pill">${{ viaje.precio }}</span>
+    </div>
+    <div class="viaje-meta">
+      <span class="viaje-meta-item">📅 <strong>{{ viaje.fecha }}</strong></span>
+      <span class="viaje-meta-item">⏰ <strong>{{ viaje.hora }}</strong></span>
+    </div>
+    <div class="estado-row">
+      {% if viaje.estado == 'pendiente' %}<span class="estado-badge estado-pendiente">🕐 Pendiente</span>
+      {% elif viaje.estado == 'en_viaje' %}<span class="estado-badge estado-en-viaje">🚗 En viaje</span>
+      {% elif viaje.estado == 'finalizado' %}<span class="estado-badge estado-finalizado">✅ Finalizado</span>
+      {% endif %}
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🚗</div>
+    <p>Este usuario todavía no publicó viajes.</p>
+  </div>
+  {% endfor %}
+
+  <!-- RESEÑAS -->
+  <h2 class="section-title">⭐ Reseñas recibidas</h2>
+  {% if resenas %}
+    {% for r in resenas %}
+    <div class="resena-card">
+      <div class="resena-header">
+        <span class="resena-autor">👤 {{ r.autor_nombre }} {{ r.autor_apellido }}</span>
+        <span class="resena-estrellas">
+          {% for i in range(1, 6) %}{% if i <= r.estrellas %}⭐{% else %}☆{% endif %}{% endfor %}
+        </span>
+      </div>
+      {% if r.comentario %}<p class="resena-comentario">"{{ r.comentario }}"</p>{% endif %}
+      <div class="resena-fecha">{{ r.created_at.strftime('%d/%m/%Y') if r.created_at else '' }}</div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">⭐</div>
+      <p>Todavía no recibió reseñas.</p>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}
