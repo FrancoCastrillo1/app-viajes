@@ -7,6 +7,8 @@ from datetime import date
 import requests
 import random
 import base64
+import io
+from PIL import Image
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev_fallback_key_cambiar_en_produccion")
@@ -225,8 +227,18 @@ def editar_perfil():
                 if ext not in {"jpg", "jpeg", "png", "gif", "webp"}:
                     flash("Formato de imagen no permitido.")
                     return redirect("/editar_perfil")
+                
+                img = Image.open(io.BytesIO(file_bytes))
+                img = img.convert("RGB")
+                img.thumbnail((200, 200), Image.LANCZOS)
+                buffer = io.BytesIO()
+                img.save(buffer, format="JPEG", quality=75)
+                b64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
+                avatar_data = f"data:image/jpeg;base64,{b64}"
                 b64 = base64.b64encode(file_bytes).decode("utf-8")
                 avatar_data = f"data:image/{ext};base64,{b64}"
+                
+                
             if nueva_password:
                 if len(nueva_password) < 6:
                     flash("La contraseña debe tener al menos 6 caracteres.")
