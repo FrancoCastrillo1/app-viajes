@@ -909,3 +909,51 @@ form { display: block; gap: unset; }
 }
 .conductor-name-link { color: var(--gray-800); text-decoration: none; font-weight: 700; }
 .conductor-name-link:hover { color: var(--primary); text-decoration: underline; }
+
+/* ============================================================
+   MOBILE FIX — verificar código
+   ============================================================ */
+@media (max-width: 600px) {
+  .container .card {
+    margin: 30px 16px !important;
+    padding: 28px 20px;
+    border-radius: var(--radius-lg);
+    background: var(--white);
+    box-shadow: var(--shadow-md);
+  }
+  .container .card input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 2rem !important;
+    letter-spacing: 6px !important;
+    padding: 14px 10px;
+    border-radius: var(--radius-md);
+  }
+  .container .card button {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    border-radius: var(--radius-md);
+    background: var(--primary);
+    color: white;
+    border: none;
+    font-weight: 700;
+    margin-top: 12px;
+    cursor: pointer;
+  }
+}
+
+/* ============================================================
+   MOBILE FIX — viaje bottom (compartir + reservar)
+   ============================================================ */
+@media (max-width: 600px) {
+  .viaje-bottom {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .viaje-bottom > div { width: 100%; }
+  .viaje-bottom .btn-reservar { width: 100%; text-align: center; }
+  .viaje-bottom .btn-whatsapp { width: 100%; justify-content: center; box-sizing: border-box; }
+  .viaje-bottom .agotado-msg { text-align: center; }
+}
