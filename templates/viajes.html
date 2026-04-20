@@ -78,7 +78,7 @@
       <div class="conductor-info">
         <div class="conductor-label">Conducido por</div>
         <div class="conductor-name">👤 {{ viaje.nombre }} {{ viaje.apellido }}</div>
-        <div class="conductor-tel">📞 {{ viaje.telefono }}</div><br>
+        <div class="conductor-tel">📞 {{ viaje.telefono }}</div><br><br>
         <a href="https://wa.me/?text={{ ('🚗 Mirá este viaje en Ruta Compartida!%0A' ~ viaje.origen ~ ' → ' ~ viaje.destino ~ '%0A📅 ' ~ viaje.fecha ~ '  ⏰ ' ~ viaje.hora ~ '%0A💵 $' ~ viaje.precio ~ '%0A👉 ' ~ request.host_url ~ 'viajes/' ~ viaje.id) | urlencode }}"
         target="_blank" class="btn-whatsapp"> 📤 Compartir Viaje</a>
       </div>
