@@ -143,7 +143,7 @@ def login():
             session["user_email"]  = user["email"]
             session["user_nombre"] = user["nombre"]
             flash("¡Bienvenido de nuevo!")
-            return redirect("/viajes")
+            return redirect("/index")
         else:
             flash("Email o contraseña incorrectos.")
     return render_template("login.html")
