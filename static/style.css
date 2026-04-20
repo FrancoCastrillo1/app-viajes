@@ -894,18 +894,45 @@ form { display: block; gap: unset; }
 /* ============================================================
    RESPONSIVE EXTRAS
    ============================================================ */
+@media (max-width: 780px) {
+  .hero { flex-direction: column; min-height: auto; }
+  .hero-inner { padding: 60px 24px 40px; }
+  .hero-img-wrap { width: 100%; height: 260px; }
+  .hero-img-wrap::before { width: 60px; }
+  .search-card { padding: 28px 22px; }
+  .search-row { flex-direction: column; gap: 12px; }
+  .route-arrow { display: none; }
+  .field-date { flex: 1; }
+  .step-divider { display: none; }
+  .social-inner, .trust-inner { flex-direction: column; gap: 40px; }
+  .social-img-badge { font-size: 0.78rem; padding: 8px 14px; }
+}
+
 @media (max-width: 640px) {
-  .perfil-header { flex-direction: column; align-items: center; text-align: center; padding: 28px 22px; }
-  .perfil-header-right { align-items: center; }
+  .perfil-header { flex-direction: column; text-align: center; padding: 28px 24px; }
   .perfil-meta { justify-content: center; }
   .stat-badges { justify-content: center; }
-  .perfil-tabs { gap: 2px; }
-  .tab-btn { font-size: 0.78rem; padding: 9px 10px; }
-  .estado-row { flex-direction: column; align-items: flex-start; }
-  .modal-box { padding: 28px 20px; }
-  .stars-input label { font-size: 1.9rem; }
-  .resena-header { flex-direction: column; align-items: flex-start; }
-  .avatar-upload-wrap { flex-direction: column; align-items: flex-start; }
+  .hero-photo {display: none;}
 }
-.conductor-name-link { color: var(--gray-800); text-decoration: none; font-weight: 700; }
-.conductor-name-link:hover { color: var(--primary); text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .nav-inner { padding: 0 15px; }
+  .nav-logo { position: static; transform: none; left: auto; font-size: 1.1rem; flex: 1; text-align: center; }
+  .nav-left, .nav-right { gap: 4px; }
+  .nav-link { font-size: 0.8rem; padding: 6px 8px; }
+  .nav-cta { font-size: 0.8rem; padding: 8px 12px; }
+  .viajes-page { padding: 32px 14px 60px; }
+  .viaje-card { padding: 22px 18px; }
+  .viaje-top { flex-direction: column; gap: 10px; }
+  .viaje-bottom { flex-direction: column; align-items: stretch; }
+  .btn-reservar { width: 100%; text-align: center; }
+  .filter-bar { padding: 16px; }
+  .filter-bar form { flex-direction: column !important; }
+  .filter-field { min-width: unset; width: 100%; }
+  .filter-btn, .filter-reset { width: 100%; text-align: center; }
+  .auth-card { padding: 36px 22px; }
+  .auth-row { grid-template-columns: 1fr; }
+  .crear-card { padding: 28px 20px; }
+  .crear-row { grid-template-columns: 1fr; }
+  .crear-wrapper { padding: 36px 14px 60px; }
+}
