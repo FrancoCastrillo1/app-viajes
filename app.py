@@ -143,7 +143,7 @@ def login():
             session["user_email"]  = user["email"]
             session["user_nombre"] = user["nombre"]
             flash("¡Bienvenido de nuevo!")
-            return redirect("/viajes")
+            return redirect("/index")
         else:
             flash("Email o contraseña incorrectos.")
     return render_template("login.html")
@@ -514,14 +514,28 @@ def dejar_resena(viaje_id, receptor_id):
     conn   = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     try:
-        cursor.execute("""
-            SELECT v.id FROM viajes v
-            WHERE v.id = %s AND v.estado = 'finalizado'
-              AND (v.user_id = %s OR EXISTS (SELECT 1 FROM reservas r WHERE r.viaje_id = v.id AND r.user_id = %s))
-        """, (viaje_id, session["user_id"], session["user_id"]))
-        if not cursor.fetchone():
-            flash("Solo podés calificar viajes finalizados en los que participaste.")
+        # Verificar que el viaje está finalizado
+        cursor.execute("SELECT id, user_id FROM viajes WHERE id = %s AND estado = 'finalizado'", (viaje_id,))
+        viaje = cursor.fetchone()
+        if not viaje:
+            flash("Solo podés calificar viajes finalizados.")
             return redirect("/perfil")
+
+        # Verificar que el autor participó (como conductor O como pasajero)
+        es_conductor = viaje["user_id"] == session["user_id"]
+        cursor.execute("SELECT id FROM reservas WHERE viaje_id = %s AND user_id = %s",
+                       (viaje_id, session["user_id"]))
+        es_pasajero = cursor.fetchone() is not None
+
+        if not es_conductor and not es_pasajero:
+            flash("Solo podés calificar viajes en los que participaste.")
+            return redirect("/perfil")
+
+        # Verificar que no se califica a sí mismo
+        if receptor_id == session["user_id"]:
+            flash("No podés calificarte a vos mismo.")
+            return redirect("/perfil")
+
         cursor.execute("""
             INSERT INTO resenas (viaje_id, autor_id, receptor_id, estrellas, comentario)
             VALUES (%s, %s, %s, %s, %s)
@@ -537,6 +551,7 @@ def dejar_resena(viaje_id, receptor_id):
         cursor.close()
         conn.close()
     return redirect("/perfil")
+
 
 def enviar_aviso(email_destino, asunto, mensaje):
     api_key = os.environ.get("RESEND_API_KEY")
