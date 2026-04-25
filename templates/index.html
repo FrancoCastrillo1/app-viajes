@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">🚗 Viajes compartidos en Argentina</div>
+    <h1 class="hero-title">Viajá junto a otros.<br><span class="hero-highlight">Lleguen más lejos.</span></h1>
+    <p class="hero-sub">Encontrá personas que hacen tu misma ruta y compartí los gastos. Más barato, más social, más sustentable.</p>
+    <div class="hero-ctas">
+      <a href="/viajes" class="hero-btn-primary">Ver viajes disponibles</a>
+      <a href="/register" class="hero-btn-secondary">Publicar mi viaje →</a>
+    </div>
+  </div>
+  <div class="hero-img-wrap">
+    <img src="/static/img/hero-bg.png" alt="Viajeros cargando el baúl" class="hero-photo">
+  </div>
+</section><br><br>
+
+<!-- SEARCH CARD -->
+<div class="search-wrapper">
+  <div class="search-card">
+    <h2 class="search-heading">📍 ¿A dónde vas hoy?</h2>
+    <form action="/buscar" method="GET" class="search-form">
+      <div class="search-row">
+        <div class="field-group">
+          <label class="field-label">Origen</label>
+          <div class="select-wrap">
+            <select name="origen" required>
+              <option value="" disabled selected>¿De dónde salís?</option>
+              {% for val, display in config.CITIES %}
+              <option value="{{ val }}">{{ display }}</option>
+              {% endfor %}
+            </select>
+            <span class="select-icon">↓</span>
+          </div>
+        </div>
+        <div class="route-arrow">→</div>
+        <div class="field-group">
+          <label class="field-label">Destino</label>
+          <div class="select-wrap">
+            <select name="destino" required>
+              <option value="" disabled selected>¿A dónde vas?</option>
+              {% for val, display in config.CITIES %}
+              <option value="{{ val }}">{{ display }}</option>
+              {% endfor %}
+            </select>
+            <span class="select-icon">↓</span>
+          </div>
+        </div>
+        <div class="field-group field-date">
+          <label class="field-label">Fecha (opcional)</label>
+          <input type="date" name="fecha" class="date-input">
+        </div>
+      </div>
+      <button type="submit" class="btn-search">Buscar viaje 🔍</button>
+    </form>
+    <a href="/viajes" class="link-all-trips">Ver todos los viajes disponibles →</a>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <div class="features-inner">
+    <div class="feature-card">
+      <div class="feature-emoji">🛡️</div>
+      <h3>Conductores verificados</h3>
+      <p>Cada conductor confirma su identidad antes de publicar un viaje.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-emoji">💬</div>
+      <h3>Contacto directo</h3>
+      <p>Coordiná con el conductor por WhatsApp sin intermediarios.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-emoji">💸</div>
+      <h3>Ahorrá hasta 50%</h3>
+      <p>Compartí los gastos y llegá a destino por mucho menos.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-emoji">🌿</div>
+      <h3>Viajá sustentable</h3>
+      <p>Menos autos en la ruta, menos emisiones, más planeta.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOTO SOCIAL: juntos en el auto -->
+<section class="social-section">
+  <div class="social-inner">
+    <div class="social-text">
+      <span class="social-tag">Una comunidad real</span>
+      <h2 class="social-title">Más que un viaje,<br>una <em>conexión</em></h2>
+      <p class="social-desc">En Ruta Compartida viajás con personas reales de tu zona. Hacés el camino más corto, más divertido y más económico. Ya somos cientos de viajeros en la región.</p>
+    </div>
+    <div class="social-img-wrap">
+      <img src="/static/img/foto-juntos.png" alt="Amigos viajando juntos" class="social-photo">
+      <div class="social-img-badge">¡Viajando en Ruta Compartida! 🗺️</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <h2 class="how-title">¿Cómo funciona?</h2>
+  <p class="how-sub">En tres pasos simples ya estás viajando</p>
+  <div class="how-steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h4>Buscá tu ruta</h4>
+      <p>Ingresá origen, destino y fecha para ver los viajes disponibles.</p>
+    </div>
+    <div class="step-divider">· · ·</div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h4>Reservá tu lugar</h4>
+      <p>Confirmá tu asiento con un solo clic. Te llega confirmación por mail.</p>
+    </div>
+    <div class="step-divider">· · ·</div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h4>Coordiná y viajá</h4>
+      <p>Hablá con el conductor por WhatsApp y acordá el punto de encuentro.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOTO SALUDO: confianza -->
+<section class="trust-section">
+  <div class="trust-inner">
+    <div class="trust-img-wrap">
+      <img src="/static/img/foto-saludo.png" alt="Conductor y pasajero saludándose" class="trust-photo">
+    </div>
+    <div class="trust-text">
+      <span class="social-tag">Seguridad primero</span>
+      <h2 class="social-title">Viajás con alguien<br>en quien podés <em>confiar</em></h2>
+      <p class="social-desc">Verificamos la identidad de cada conductor antes de que publique. Además, podés contactarte por WhatsApp, ver el historial del viaje y cancelar cuando necesitás.</p>
+      <ul class="trust-list">
+        <li>✅ Identidad verificada por mail</li>
+        <li>✅ Contacto directo vía WhatsApp</li>
+        <li>✅ Cancelación sin costo</li>
+        <li>✅ Notificaciones en tiempo real</li>
+      </ul>
+      <a href="/register" class="trust-cta">Crear mi cuenta gratis →</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

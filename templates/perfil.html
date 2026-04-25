@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="perfil-page">
+
+  <!-- HEADER -->
+  <div class="perfil-header">
+    <div class="perfil-avatar-wrap">
+      {% if user.avatar_data %}
+        <img src="{{ user.avatar_data }}" alt="Avatar" class="perfil-avatar-img">
+      {% else %}
+        <div class="perfil-avatar">{{ user.nombre[0] | upper }}</div>
+      {% endif %}
+    </div>
+    <div class="perfil-info-main">
+      <h1 class="perfil-name">{{ user.nombre }} {{ user.apellido }}</h1>
+      {% if promedio %}
+      <div class="perfil-rating">
+        <span class="stars-static">
+          {% for i in range(1, 6) %}{% if i <= promedio %}⭐{% else %}☆{% endif %}{% endfor %}
+        </span>
+        <span class="rating-num">{{ promedio }}/5</span>
+        <span class="rating-count">({{ resenas|length }} reseña{{ 's' if resenas|length != 1 else '' }})</span>
+      </div>
+      {% endif %}
+      <div class="perfil-meta">
+        <span class="perfil-meta-item">✉️ {{ user.email }}</span>
+        <span class="perfil-meta-item">📞 {{ user.telefono }}</span>
+      </div>
+    </div>
+    <div class="perfil-header-right">
+      <div class="stat-badges">
+        <div class="stat-badge">
+          <span class="stat-num">{{ cantidad_viajes }}</span>
+          <span class="stat-label">Publicados</span>
+        </div>
+        <div class="stat-badge">
+          <span class="stat-num">{{ mis_reservas|length }}</span>
+          <span class="stat-label">Reservas</span>
+        </div>
+      </div>
+      <a href="/editar_perfil" class="btn-editar-perfil">✏️ Editar perfil</a>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="perfil-tabs">
+    <button class="tab-btn active" onclick="showTab('publicados', this)">🚗 Mis viajes</button>
+    <button class="tab-btn" onclick="showTab('reservados', this)">🎫 Mis reservas</button>
+    <button class="tab-btn" onclick="showTab('resenas-tab', this)">⭐ Reseñas</button>
+  </div>
+
+  <!-- TAB: MIS VIAJES -->
+  <div class="tab-content" id="tab-publicados">
+    <h2 class="section-title">🚗 Mis viajes publicados</h2>
+    {% for viaje in viajes %}
+    <div class="viaje-card">
+      <div class="viaje-top">
+        <div class="viaje-ruta">{{ viaje.origen }} <span>→</span> {{ viaje.destino }}</div>
+        <span class="precio-pill">${{ viaje.precio }}</span>
+      </div>
+      <div class="viaje-meta">
+        <span class="viaje-meta-item">📅 <strong>{{ viaje.fecha }}</strong></span>
+        <span class="viaje-meta-item">⏰ <strong>{{ viaje.hora }}</strong></span>
+        <span class="viaje-meta-item">💺 <strong>{{ viaje.lugares }}</strong> lugar{{ 'es' if viaje.lugares != 1 else '' }}</span>
+      </div>
+      <div class="estado-row">
+        {% if viaje.estado == 'pendiente' %}
+          <span class="estado-badge estado-pendiente">🕐 Pendiente</span>
+          <div class="estado-controls">
+            <form action="/viaje/{{ viaje.id }}/estado" method="POST" style="display:inline;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="estado" value="en_viaje">
+              <button type="submit" class="btn-estado btn-iniciar">▶ Iniciar viaje</button>
+            </form>
+          </div>
+        {% elif viaje.estado == 'en_viaje' %}
+          <span class="estado-badge estado-en-viaje">🚗 En viaje</span>
+          <div class="estado-controls">
+            <form action="/viaje/{{ viaje.id }}/estado" method="POST" style="display:inline;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="estado" value="finalizado">
+              <button type="submit" class="btn-estado btn-finalizar">✓ Marcar finalizado</button>
+            </form>
+          </div>
+        {% elif viaje.estado == 'finalizado' %}
+          <span class="estado-badge estado-finalizado">✅ Finalizado</span>
+        {% endif %}
+      </div>
+      <div class="pasajeros-list">
+        <h4>Pasajeros confirmados</h4>
+        <ul>
+          {% set tiene = namespace(value=false) %}
+          {% for res in reservas %}
+            {% if res.viaje_id == viaje.id %}
+              {% set tiene.value = true %}
+              <li>
+                <a href="/usuario/{{ res.pasajero_id }}" class="pasajero-link">{{ res.nombre }} {{ res.apellido }}</a>
+                {% if viaje.estado == 'finalizado' and (viaje.id, res.pasajero_id) not in resenas_enviadas %}
+                  <button class="btn-resena-inline" onclick="abrirResena({{ viaje.id }}, {{ res.pasajero_id }}, '{{ res.nombre }}')">⭐ Calificar</button>
+                {% endif %}
+              </li>
+            {% endif %}
+          {% endfor %}
+          {% if not tiene.value %}<li class="no-pasajeros">Aún no hay pasajeros.</li>{% endif %}
+        </ul>
+      </div>
+      <div class="card-actions">
+        {% if viaje.estado == 'pendiente' %}
+        <form action="/cancelar_viaje/{{ viaje.id }}" method="POST" onsubmit="return confirm('¿Eliminar esta publicación?');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn-danger">🗑️ Eliminar publicación</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">🚗</div>
+      <p>Todavía no publicaste ningún viaje.</p>
+      <a href="/crear_viaje">Publicar mi primer viaje</a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- TAB: MIS RESERVAS -->
+  <div class="tab-content hidden" id="tab-reservados">
+    <h2 class="section-title">🎫 Viajes que reservé</h2>
+    {% for reserva in mis_reservas %}
+    <div class="reserva-card">
+      <div class="viaje-top">
+        <div class="viaje-ruta">{{ reserva.origen }} <span>→</span> {{ reserva.destino }}</div>
+        <span class="precio-pill">${{ reserva.precio }}</span>
+      </div>
+      <div class="viaje-meta">
+        <span class="viaje-meta-item">📅 <strong>{{ reserva.fecha }}</strong></span>
+        <span class="viaje-meta-item">⏰ <strong>{{ reserva.hora }}</strong></span>
+      </div>
+      <div class="estado-row">
+        {% if reserva.estado == 'pendiente' %}<span class="estado-badge estado-pendiente">🕐 Pendiente</span>
+        {% elif reserva.estado == 'en_viaje' %}<span class="estado-badge estado-en-viaje">🚗 En viaje</span>
+        {% elif reserva.estado == 'finalizado' %}<span class="estado-badge estado-finalizado">✅ Finalizado</span>
+        {% endif %}
+      </div>
+      <div class="conductor-info-box">
+        <a href="/usuario/{{ reserva.conductor_id }}" class="conductor-link">
+          👤 <strong>{{ reserva.conductor_nombre }} {{ reserva.conductor_apellido }}</strong>
+        </a>
+      </div>
+      <div class="card-actions">
+        <a href="https://wa.me/{{ reserva.conductor_telefono }}?text=Hola%20{{ reserva.conductor_nombre }},%20te%20escribo%20por%20el%20viaje%20a%20{{ reserva.destino }}%20desde%20Ruta%20Compartida"
+           target="_blank" class="btn-whatsapp">💬 WhatsApp del conductor</a>
+        {% if reserva.estado == 'finalizado' and (reserva.viaje_id, reserva.conductor_id) not in resenas_enviadas %}
+          <button class="btn-resena-accion" onclick="abrirResena({{ reserva.viaje_id }}, {{ reserva.conductor_id }}, '{{ reserva.conductor_nombre }}')">⭐ Calificar conductor</button>
+        {% endif %}
+        {% if reserva.estado == 'pendiente' %}
+        <form action="/cancelar_reserva/{{ reserva.reserva_id }}" method="POST" onsubmit="return confirm('¿Cancelás tu lugar?');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn-danger">✕ Cancelar mi lugar</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <p>Todavía no reservaste ningún viaje.</p>
+      <a href="/viajes">Buscar viajes disponibles</a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- TAB: RESEÑAS -->
+  <div class="tab-content hidden" id="tab-resenas-tab">
+    <h2 class="section-title">⭐ Reseñas recibidas</h2>
+    {% if resenas %}
+      {% for r in resenas %}
+      <div class="resena-card">
+        <div class="resena-header">
+          <span class="resena-autor">👤 {{ r.autor_nombre }} {{ r.autor_apellido }}</span>
+          <span class="resena-estrellas">
+            {% for i in range(1, 6) %}{% if i <= r.estrellas %}⭐{% else %}☆{% endif %}{% endfor %}
+          </span>
+        </div>
+        {% if r.comentario %}<p class="resena-comentario">"{{ r.comentario }}"</p>{% endif %}
+        <div class="resena-fecha">{{ r.created_at.strftime('%d/%m/%Y') if r.created_at else '' }}</div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">⭐</div>
+        <p>Todavía no recibiste reseñas.</p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- MODAL RESEÑA -->
+<div id="modal-resena" class="modal-overlay" style="display:none;">
+  <div class="modal-box">
+    <button class="modal-close" onclick="cerrarResena()">✕</button>
+    <h3 class="modal-title">Calificar a <span id="modal-nombre"></span></h3>
+    <form id="form-resena" method="POST" action="">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="stars-input">
+        <input type="radio" name="estrellas" id="star5" value="5" required><label for="star5">★</label>
+        <input type="radio" name="estrellas" id="star4" value="4"><label for="star4">★</label>
+        <input type="radio" name="estrellas" id="star3" value="3"><label for="star3">★</label>
+        <input type="radio" name="estrellas" id="star2" value="2"><label for="star2">★</label>
+        <input type="radio" name="estrellas" id="star1" value="1"><label for="star1">★</label>
+      </div>
+      <textarea name="comentario" class="resena-textarea" placeholder="Contá tu experiencia (opcional)..." maxlength="500"></textarea>
+      <button type="submit" class="btn-auth">Enviar reseña</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function showTab(tab, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.remove('hidden');
+  btn.classList.add('active');
+}
+function abrirResena(viajeId, receptorId, nombre) {
+  document.getElementById('modal-nombre').textContent = nombre;
+  document.getElementById('form-resena').action = '/resena/' + viajeId + '/' + receptorId;
+  document.getElementById('modal-resena').style.display = 'flex';
+}
+function cerrarResena() {
+  document.getElementById('modal-resena').style.display = 'none';
+}
+document.getElementById('modal-resena').addEventListener('click', function(e) {
+  if (e.target === this) cerrarResena();
+});
+</script>
+{% endblock %}

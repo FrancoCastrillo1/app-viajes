@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="crear-wrapper">
+  <div class="crear-header">
+    <h1>✏️ Editar mi perfil</h1>
+    <p>Actualizá tu información personal</p>
+  </div>
+
+  <div class="crear-card">
+    <form method="POST" action="/editar_perfil" enctype="multipart/form-data" class="crear-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <!-- AVATAR -->
+      <div class="section-sep"><span>Foto de perfil</span></div>
+      <div class="avatar-upload-wrap">
+        {% if user.avatar_data %}
+          <img src="{{ user.avatar_data }}" alt="Avatar actual" class="avatar-preview" id="avatar-preview">
+        {% else %}
+          <div class="avatar-preview-placeholder" id="avatar-preview-placeholder">{{ user.nombre[0]|upper }}</div>
+          <img src="" alt="" class="avatar-preview" id="avatar-preview" style="display:none;">
+        {% endif %}
+        <div class="avatar-upload-info">
+          <label for="avatar" class="btn-avatar-upload">📷 Cambiar foto</label>
+          <input type="file" name="avatar" id="avatar" accept="image/*" style="display:none;" onchange="previewAvatar(this)">
+          <p class="avatar-hint">JPG, PNG o WEBP · máx. 2MB</p>
+        </div>
+      </div>
+
+      <!-- DATOS PERSONALES -->
+      <div class="section-sep"><span>Datos personales</span></div>
+      <div class="crear-row">
+        <div class="crear-field">
+          <label class="crear-label">Nombre</label>
+          <input type="text" name="nombre" class="crear-input" value="{{ user.nombre }}" required>
+        </div>
+        <div class="crear-field">
+          <label class="crear-label">Apellido</label>
+          <input type="text" name="apellido" class="crear-input" value="{{ user.apellido }}" required>
+        </div>
+      </div>
+
+      <!-- CAMBIO DE CONTRASEÑA -->
+      <div class="section-sep"><span>Cambiar contraseña (opcional)</span></div>
+      <div class="crear-field">
+        <label class="crear-label">Nueva contraseña</label>
+        <input type="password" name="nueva_password" class="crear-input" placeholder="Dejá vacío para no cambiarla" minlength="6">
+      </div>
+      <div class="crear-field">
+        <label class="crear-label">Confirmar nueva contraseña</label>
+        <input type="password" id="confirm-pass" class="crear-input" placeholder="Repetí la nueva contraseña">
+        <span id="pass-match" style="font-size:0.8rem;margin-top:4px;display:none;"></span>
+      </div>
+
+      <button type="submit" class="btn-publicar" id="btn-guardar">Guardar cambios →</button>
+    </form>
+
+    <div style="margin-top:20px;text-align:center;">
+      <a href="/perfil" style="color:var(--gray-400);font-size:0.9rem;text-decoration:none;">← Volver al perfil</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function previewAvatar(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const preview = document.getElementById('avatar-preview');
+      const placeholder = document.getElementById('avatar-preview-placeholder');
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+      if (placeholder) placeholder.style.display = 'none';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+// Validación de contraseñas
+const newPass = document.querySelector('input[name="nueva_password"]');
+const confirmPass = document.getElementById('confirm-pass');
+const matchMsg   = document.getElementById('pass-match');
+const btnGuardar = document.getElementById('btn-guardar');
+
+function checkPasswords() {
+  const np = newPass.value;
+  const cp = confirmPass.value;
+  if (!np && !cp) { matchMsg.style.display = 'none'; return; }
+  matchMsg.style.display = 'block';
+  if (np === cp) {
+    matchMsg.textContent = '✅ Las contraseñas coinciden';
+    matchMsg.style.color = '#059669';
+    btnGuardar.disabled = false;
+  } else {
+    matchMsg.textContent = '❌ Las contraseñas no coinciden';
+    matchMsg.style.color = '#DC2626';
+    btnGuardar.disabled = true;
+  }
+}
+newPass.addEventListener('input', checkPasswords);
+confirmPass.addEventListener('input', checkPasswords);
+</script>
+{% endblock %}

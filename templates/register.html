@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <a href="/" class="auth-logo-text">Ruta Compartida</a>
+      <p>Viajá seguro, viajá acompañado</p>
+    </div>
+
+    <h1 class="auth-title">Creá tu cuenta</h1>
+    <p class="auth-subtitle">Es gratis y solo toma un minuto</p>
+
+    <form method="POST" class="auth-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="auth-row">
+        <div class="auth-field">
+          <label class="auth-label">Nombre</label>
+          <input type="text" name="nombre" class="auth-input" placeholder="Juan" required>
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Apellido</label>
+          <input type="text" name="apellido" class="auth-input" placeholder="García" required>
+        </div>
+      </div>
+
+      <div class="auth-field">
+        <label class="auth-label">Teléfono</label>
+        <input type="text" name="telefono" class="auth-input" placeholder="Ej: 3571 123456" required>
+      </div>
+
+      <div class="auth-field">
+        <label class="auth-label">Email</label>
+        <input type="email" name="email" class="auth-input" placeholder="tu@email.com" required>
+      </div>
+
+      <div class="auth-field">
+        <label class="auth-label">Contraseña</label>
+        <input type="password" name="password" class="auth-input" placeholder="Mínimo 6 caracteres" required>
+      </div>
+
+      <button type="submit" class="btn-auth">Crear cuenta →</button>
+
+      <p class="auth-terms">
+        Al registrarte aceptás nuestros
+        <a href="/terminos">Términos y Condiciones</a>
+      </p>
+    </form>
+
+    <div class="auth-divider"><span>o</span></div>
+
+    <div class="auth-footer">
+      ¿Ya tenés cuenta? <a href="/login">Iniciá sesión</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

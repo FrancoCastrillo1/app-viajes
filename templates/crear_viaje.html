@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="crear-wrapper">
+
+  <div class="crear-header">
+    <h1>🚗 Publicá tu viaje</h1>
+    <p>Completá los datos y empezá a recibir pasajeros</p>
+  </div>
+
+  <div class="crear-card">
+    <form method="POST" class="crear-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <!-- RUTA -->
+      <div class="section-sep"><span>Ruta</span></div>
+
+      <div class="crear-row">
+        <div class="crear-field">
+          <label class="crear-label">📍 Origen</label>
+          <div class="select-wrap">
+            <select name="origen" class="crear-select" required>
+              <option value="" disabled selected>Seleccioná</option>
+              {% for val, display in config.CITIES %}
+              <option value="{{ val }}">{{ display }}</option>
+              {% endfor %}
+            </select>
+            <span class="chevron">↓</span>
+          </div>
+        </div>
+        <div class="crear-field">
+          <label class="crear-label">🏁 Destino</label>
+          <div class="select-wrap">
+            <select name="destino" class="crear-select" required>
+              <option value="" disabled selected>Seleccioná</option>
+              {% for val, display in config.CITIES %}
+              <option value="{{ val }}">{{ display }}</option>
+              {% endfor %}
+            </select>
+            <span class="chevron">↓</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FECHA Y HORA -->
+      <div class="section-sep"><span>Fecha y hora</span></div>
+
+      <div class="crear-row">
+        <div class="crear-field">
+          <label class="crear-label">📅 Fecha</label>
+          <input type="date" name="fecha" class="crear-input" min="{{ fecha_hoy }}" required>
+        </div>
+        <div class="crear-field">
+          <label class="crear-label">⏰ Hora de salida</label>
+          <input type="time" name="hora" class="crear-input" required>
+        </div>
+      </div>
+
+      <!-- DETALLES -->
+      <div class="section-sep"><span>Detalles</span></div>
+
+      <div class="crear-row">
+        <div class="crear-field">
+          <label class="crear-label">🪑 Lugares disponibles</label>
+          <input type="number" name="lugares" class="crear-input"
+                 placeholder="Ej: 3" min="1" max="8" required>
+        </div>
+        <div class="crear-field">
+          <label class="crear-label">💵 Precio por persona</label>
+          <input type="number" step="0.01" name="precio" class="crear-input"
+                 placeholder="$ ARS" min="0" required>
+        </div>
+      </div>
+
+      <div class="crear-field">
+        <label class="crear-label">🤝 Punto de encuentro</label>
+        <input type="text" name="encuentro" class="crear-input"
+               placeholder="Ej: Estación Shell, esquina Ruta 11 y Av. San Martín" required>
+      </div>
+
+      <button type="submit" class="btn-publicar">Publicar viaje →</button>
+
+    </form>
+
+    <div class="verificado-banner">
+      <span class="check">✅</span>
+      <div>
+        <h4>Conductor verificado</h4>
+        <p>Los pasajeros ven tu cuenta verificada y confían más en tu viaje.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
