@@ -1275,3 +1275,196 @@ html { scroll-behavior: smooth; }
    MISC
    ============================================================ */
 .no-rating-msg { color: rgba(255,255,255,0.5); font-size: 0.9rem; margin: 4px 0 0; }
+
+/* ============================================================
+   PREMIUM VISUAL UPGRADE — segunda ronda
+   ============================================================ */
+
+/* --- Hero más dramático --- */
+.hero {
+  background: linear-gradient(135deg, #0f0c29 0%, #1a1a2e 40%, #2d1b0e 80%, #3d2008 100%);
+  position: relative; overflow: hidden;
+}
+.hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23E76F51' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0;
+}
+.hero-inner { position: relative; z-index: 1; }
+.hero-img-wrap { position: relative; z-index: 1; }
+
+/* --- Hero badge --- */
+.hero-badge {
+  background: linear-gradient(135deg, rgba(231,111,81,0.2), rgba(244,162,97,0.1));
+  border: 1px solid rgba(231,111,81,0.4);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  font-weight: 700; letter-spacing: 0.3px;
+  box-shadow: 0 2px 12px rgba(231,111,81,0.2);
+}
+
+/* --- Hero highlight con gradiente de texto --- */
+.hero-highlight {
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-style: italic;
+  /* Fallback para browsers que no soportan background-clip: text */
+  color: var(--primary-light);
+}
+
+/* --- Search card con borde degradado --- */
+.search-card {
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(var(--white), var(--white)) padding-box,
+    linear-gradient(135deg, var(--primary-light), var(--cream-border)) border-box;
+  box-shadow: var(--shadow-xl), 0 4px 24px rgba(231,111,81,0.12);
+}
+
+/* --- Feature cards hover premium --- */
+.feature-card {
+  border-top: 3px solid transparent;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-top-color 0.25s;
+}
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1), 0 4px 12px rgba(231,111,81,0.1);
+  border-top-color: var(--primary);
+}
+.feature-emoji {
+  width: 56px; height: 56px; border-radius: 16px;
+  background: linear-gradient(135deg, var(--cream), var(--cream-deep));
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 1.7rem; margin-bottom: 18px;
+  box-shadow: 0 4px 12px rgba(231,111,81,0.15);
+}
+
+/* --- Viaje cards — ruta más prominente --- */
+.viaje-ruta {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+.viaje-ruta span {
+  color: var(--primary);
+  font-style: normal;
+  font-size: 1.1rem;
+}
+.viaje-card {
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+.viaje-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.1), 0 4px 16px rgba(231,111,81,0.08);
+}
+
+/* --- Precio pill premium --- */
+.precio-pill {
+  background: linear-gradient(135deg, var(--cream), var(--cream-deep));
+  border: 1.5px solid var(--cream-deep);
+  box-shadow: 0 2px 8px rgba(231,111,81,0.18);
+  font-size: 1.2rem;
+}
+
+/* --- Auth wrapper fondo con destellos radiales --- */
+.auth-wrapper {
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(231,111,81,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(244,162,97,0.06) 0%, transparent 60%),
+    var(--cream);
+}
+.auth-card {
+  box-shadow: var(--shadow-xl), 0 8px 32px rgba(231,111,81,0.1);
+}
+.auth-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(231,111,81,0.12);
+  background: var(--white);
+}
+
+/* --- Perfil header gradiente más rico --- */
+.perfil-header {
+  background: linear-gradient(135deg, #0f0c29 0%, #1a1a2e 40%, #2d1b0e 100%);
+  position: relative; overflow: hidden;
+}
+.perfil-header::before {
+  content: '';
+  position: absolute; top: -60px; right: -60px;
+  width: 260px; height: 260px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(231,111,81,0.18) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.perfil-header > * { position: relative; z-index: 1; }
+
+/* --- Avatar ring doble naranja --- */
+.perfil-avatar {
+  box-shadow: 0 0 0 3px var(--primary), 0 0 0 6px rgba(231,111,81,0.25), var(--shadow-orange);
+}
+.perfil-avatar-img {
+  box-shadow: 0 0 0 3px var(--primary), 0 0 0 6px rgba(231,111,81,0.25);
+}
+
+/* --- Stat badges glass-effect --- */
+.stat-badge {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-md);
+  padding: 14px 22px;
+  transition: background 0.2s, transform 0.2s;
+}
+.stat-badge:hover {
+  background: rgba(255,255,255,0.13);
+  transform: scale(1.04);
+}
+.stat-num {
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+}
+
+/* --- Filter bar elevada --- */
+.filter-bar {
+  background: var(--white);
+  border: 1.5px solid var(--cream-border);
+  border-radius: var(--radius-xl);
+  padding: 22px 28px;
+  box-shadow: var(--shadow-sm);
+}
+.filter-btn {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  box-shadow: var(--shadow-orange);
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.filter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(231,111,81,0.4);
+}
+
+/* --- Botones principales hover premium --- */
+.btn-reservar:hover, .btn-publicar:hover, .btn-auth:hover,
+.btn-search:hover, .hero-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(231,111,81,0.45);
+}
+
+/* --- Tab active indicator con gradiente --- */
+.tab-btn { position: relative; transition: color 0.2s; }
+.tab-btn.active { color: var(--primary); }
+.tab-btn.active::after {
+  content: '';
+  position: absolute; bottom: -2px; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  border-radius: 3px 3px 0 0;
+}
+
+/* --- Inline styles eliminados → clases --- */
+.sidebar-logout-form { margin: 0; padding: 0; }
+.footer-bottom { text-align: center; }
+.conductor-avatar-sm { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.review-count { color: var(--gray-400); font-size: 0.82rem; }

@@ -20,7 +20,7 @@
     <a href="/perfil">👤 Mi Perfil</a>
     <a href="/crear_viaje">🚗 Publicar viaje</a>
     <hr class="sidebar-sep">
-    <form action="/logout" method="POST" style="margin:0; padding:0;">
+    <form action="/logout" method="POST" class="sidebar-logout-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button type="submit" class="sidebar-logout-btn">🚪 Cerrar sesión</button>
     </form>
@@ -106,7 +106,7 @@
 
     <hr class="footer-divider">
 
-    <div class="footer-bottom" style="text-align:center;">
+    <div class="footer-bottom">
         <p>&copy; 2026 Ruta Compartida. Todos los derechos reservados.</p>
     </div>
 </footer>
