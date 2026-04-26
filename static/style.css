@@ -1507,6 +1507,12 @@ html { scroll-behavior: smooth; }
   }
   .search-card { padding: 28px 20px 24px; }
   .search-heading { font-size: 1.25rem; margin-bottom: 20px; }
+
+  /* Campos full-width en mobile */
+  .search-row { flex-direction: column; gap: 14px; margin-bottom: 20px; }
+  .field-group, .field-date { flex: 1; min-width: 0; width: 100%; }
+  .select-wrap, .select-wrap select, .date-input { width: 100%; box-sizing: border-box; }
+  .route-arrow { display: none; }
 }
 
 @media (max-width: 600px) {
