@@ -75,7 +75,7 @@
             </form>
           </div>
         {% elif viaje.estado == 'en_viaje' %}
-          <span class="estado-badge estado-en-viaje">🚗 En viaje</span>
+          <span class="estado-badge estado-en-viaje"><span class="pulse-dot"></span> En viaje</span>
           <div class="estado-controls">
             <form action="/viaje/{{ viaje.id }}/estado" method="POST" style="display:inline;">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -210,7 +210,8 @@
         <input type="radio" name="estrellas" id="star2" value="2"><label for="star2">★</label>
         <input type="radio" name="estrellas" id="star1" value="1"><label for="star1">★</label>
       </div>
-      <textarea name="comentario" class="resena-textarea" placeholder="Contá tu experiencia (opcional)..." maxlength="500"></textarea>
+      <textarea name="comentario" id="resena-texto" class="resena-textarea" placeholder="Contá tu experiencia (opcional)..." maxlength="500" oninput="updateCounter(this)"></textarea>
+      <div class="resena-char-counter"><span id="resena-count">0</span>/500</div>
       <button type="submit" class="btn-auth">Enviar reseña</button>
     </form>
   </div>
@@ -234,5 +235,9 @@ function cerrarResena() {
 document.getElementById('modal-resena').addEventListener('click', function(e) {
   if (e.target === this) cerrarResena();
 });
+function updateCounter(textarea) {
+  var counter = document.getElementById('resena-count');
+  if (counter) counter.textContent = textarea.value.length;
+}
 </script>
 {% endblock %}

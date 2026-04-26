@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="servicio-de-auto.png">
 </head>
+<body>
 
 <!-- SIDEBAR -->
 <div id="mySidebar" class="sidebar">
@@ -18,10 +19,10 @@
     {% if session.user_id %}
     <a href="/perfil">👤 Mi Perfil</a>
     <a href="/crear_viaje">🚗 Publicar viaje</a>
-    <hr style="border-color: #F3E8DC; margin: 10px 20px;">
+    <hr class="sidebar-sep">
     <form action="/logout" method="POST" style="margin:0; padding:0;">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <button type="submit" style="background:none;border:none;cursor:pointer;padding:15px 28px;font-size:1rem;font-weight:600;color:#DC2626;display:block;width:100%;text-align:left;border-left:3px solid transparent;transition:0.2s;">🚪 Cerrar sesión</button>
+      <button type="submit" class="sidebar-logout-btn">🚪 Cerrar sesión</button>
     </form>
     {% else %}
     <a href="/login">🔑 Ingresar</a>
@@ -34,7 +35,7 @@
     <div class="nav-inner">
         <div class="nav-left">
             {% if session.user_id %}
-            <button class="hamburger" onclick="openNav()">
+            <button class="hamburger" onclick="openNav()" aria-label="Abrir menú">
                 <span></span><span></span><span></span>
             </button>
             {% else %}
@@ -57,18 +58,19 @@
 
 <!-- CONTENIDO -->
 <main>
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <div class="flash-wrapper">
-        {% for message in messages %}
-        <div class="flash-msg">{{ message }}</div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% endwith %}
-
     {% block content %}{% endblock %}
 </main>
+
+<!-- FLASH TOASTS -->
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div class="flash-wrapper" aria-live="polite">
+    {% for message in messages %}
+    <div class="flash-msg" role="alert">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
 
 <!-- CONTACT -->
 <section class="contact-section">
@@ -80,209 +82,47 @@
 
 <!-- FOOTER -->
 <footer class="main-footer">
-    <div class="footer-content">
-        <div class="footer-logo">
+    <div class="footer-grid">
+        <div class="footer-col-brand">
             <a href="/" class="footer-logo-link">Ruta Compartida</a>
             <p class="footer-tagline">Viajá seguro, viajá acompañado.</p>
         </div>
 
-        <div class="footer-links">
-            <a href="/viajes">Buscar Viajes</a>
-            <a href="/crear_viaje">Publicar viaje</a>
-            <a href="/terminos">Términos y Condiciones</a>
-            <a href="mailto:rutacompartida.soporte@gmail.com">Contacto</a>
+        <div>
+            <p class="footer-col-heading">Navegación</p>
+            <div class="footer-col-links">
+                <a href="/viajes">Buscar Viajes</a>
+                <a href="/crear_viaje">Publicar viaje</a>
+                <a href="/terminos">Términos y Condiciones</a>
+            </div>
         </div>
 
-        <hr class="footer-divider">
-
-        <div class="footer-bottom">
-            <p>&copy; 2026 Ruta Compartida. Todos los derechos reservados.</p>
+        <div class="footer-col-contact">
+            <p class="footer-col-heading">Contacto</p>
+            <p>¿Preguntas o reportes?</p>
+            <a href="mailto:rutacompartida.soporte@gmail.com">rutacompartida.soporte@gmail.com</a>
         </div>
+    </div>
+
+    <hr class="footer-divider">
+
+    <div class="footer-bottom" style="text-align:center;">
+        <p>&copy; 2026 Ruta Compartida. Todos los derechos reservados.</p>
     </div>
 </footer>
 
-<style>
-/* ===== NAVBAR ===== */
-.navbar {
-    background: #fff;
-    border-bottom: 1px solid #F3E8DC;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 1px 8px rgba(0,0,0,0.05);
-}
-.nav-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 24px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-.nav-logo {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #E76F51;
-    text-decoration: none;
-    letter-spacing: 0.5px;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-}
-.nav-left, .nav-right { display: flex; align-items: center; gap: 8px; }
-.nav-link {
-    text-decoration: none;
-    color: #4B5563;
-    font-weight: 600;
-    font-size: 0.9rem;
-    padding: 8px 12px;
-    border-radius: 8px;
-    transition: background 0.2s;
-}
-.nav-link:hover { background: #FFF7ED; color: #E76F51; }
-.nav-cta {
-    background: #E76F51;
-    color: white;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 0.9rem;
-    padding: 9px 18px;
-    border-radius: 10px;
-    transition: background 0.2s, transform 0.2s;
-    box-shadow: 0 4px 10px rgba(231,111,81,0.25);
-}
-.nav-cta:hover { background: #D85D41; transform: translateY(-1px); }
-.hamburger {
-    background: none;
-    border: 1px solid #E5E7EB;
-    border-radius: 8px;
-    width: 40px; height: 40px;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 5px; cursor: pointer; padding: 0;
-}
-.hamburger span { display: block; width: 18px; height: 2px; background: #374151; border-radius: 2px; }
-
-/* ===== SIDEBAR ===== */
-.sidebar {
-    height: 100%;
-    width: 0;
-    position: fixed;
-    z-index: 2000;
-    top: 0; left: 0;
-    background: #fff;
-    overflow-x: hidden;
-    transition: 0.35s cubic-bezier(0.4,0,0.2,1);
-    padding-top: 70px;
-    box-shadow: 4px 0 30px rgba(0,0,0,0.12);
-    border-right: 1px solid #F3E8DC;
-}
-.sidebar a {
-    padding: 15px 28px;
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #374151;
-    display: block;
-    transition: 0.2s;
-    border-left: 3px solid transparent;
-}
-.sidebar a:hover {
-    background: #FFF7ED;
-    color: #E76F51;
-    border-left-color: #E76F51;
-    padding-left: 34px;
-}
-.closebtn {
-    position: absolute;
-    top: 14px; right: 18px;
-    font-size: 2rem;
-    color: #9CA3AF !important;
-    border-left: none !important;
-    padding: 0 !important;
-}
-
-/* ===== FLASH ===== */
-.flash-wrapper { max-width: 900px; margin: 20px auto 0; padding: 0 20px; }
-.flash-msg {
-    background: #FEF3C7;
-    color: #92400E;
-    border: 1px solid #FDE68A;
-    padding: 14px 22px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    margin-bottom: 10px;
-}
-
-/* ===== CONTACT SECTION ===== */
-.contact-section {
-    background: #FFF7ED;
-    padding: 50px 24px;
-    text-align: center;
-    border-top: 1px solid #F3E8DC;
-}
-.contact-section h3 {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 1.6rem;
-    color: #1a1a2e;
-    margin: 0 0 10px;
-}
-.contact-section p { color: #6B7280; font-size: 1rem; margin: 0; }
-.contact-section a { color: #E76F51; font-weight: 600; text-decoration: none; }
-.contact-section a:hover { text-decoration: underline; }
-
-/* ===== FOOTER ===== */
-.main-footer {
-    background: #1a1a2e;
-    color: #fff;
-    padding: 60px 24px 32px;
-}
-.footer-content { max-width: 1100px; margin: 0 auto; text-align: center; }
-.footer-logo-link {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #F4A261;
-    text-decoration: none;
-    letter-spacing: 1px;
-    display: block;
-    margin-bottom: 8px;
-}
-.footer-tagline { color: rgba(255,255,255,0.4); font-style: italic; font-size: 0.9rem; margin: 0 0 30px; }
-.footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 28px;
-    flex-wrap: wrap;
-    margin-bottom: 30px;
-}
-.footer-links a {
-    color: rgba(255,255,255,0.55);
-    text-decoration: none;
-    font-size: 0.88rem;
-    font-weight: 500;
-    transition: color 0.2s;
-}
-.footer-links a:hover { color: #fff; }
-.footer-divider { border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 0 0 24px; }
-.footer-bottom p { font-size: 0.82rem; color: rgba(255,255,255,0.3); margin: 0; }
-
-/* ===== MOBILE ===== */
-@media (max-width: 600px) {
-    .nav-inner { padding: 0 15px; }
-    .nav-logo { position: static; transform: none; left: auto; font-size: 1.1rem; flex: 1; text-align: center; }
-    .nav-left, .nav-right { gap: 4px; }
-    .nav-link { font-size: 0.8rem; padding: 6px 8px; }
-    .nav-cta { font-size: 0.8rem; padding: 8px 12px; }
-}
-</style>
-
 <script>
-function openNav() { document.getElementById("mySidebar").style.width = "260px"; }
+function openNav()  { document.getElementById("mySidebar").style.width = "260px"; }
 function closeNav() { document.getElementById("mySidebar").style.width = "0"; }
+
+// Auto-dismiss flash toasts
+document.querySelectorAll('.flash-msg').forEach(function(msg) {
+  setTimeout(function() {
+    msg.style.opacity = '0';
+    msg.style.transform = 'translateX(40px)';
+    setTimeout(function() { if (msg.parentNode) msg.parentNode.removeChild(msg); }, 400);
+  }, 5000);
+});
 </script>
 </body>
 </html>

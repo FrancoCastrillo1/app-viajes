@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="crear-wrapper">
+<div class="detalle-wrapper">
 
-  <div class="crear-header">
-    <h1>🚗 {{ viaje.origen }} → {{ viaje.destino }}</h1>
+  <div class="detalle-header">
+    <h1>{{ viaje.origen }} <span class="arrow">→</span> {{ viaje.destino }}</h1>
     <p>Detalle del viaje compartido</p>
   </div>
 
-  <div class="crear-card">
+  <div class="detalle-card">
 
     <div class="viaje-meta" style="margin-bottom: 24px;">
       <span class="viaje-meta-item">📅 <strong>{{ viaje.fecha }}</strong></span>
@@ -23,13 +23,15 @@
       </span>
     </div>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
-      <div>
-        <div class="conductor-label">Conducido por</div>
-        <div class="conductor-name">👤 {{ viaje.nombre }} {{ viaje.apellido }}</div>
-        <div class="conductor-tel">📞 {{ viaje.telefono }}</div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+      <div class="conductor-card" style="flex: 1; margin: 0;">
+        <div class="conductor-avatar-ph">👤</div>
+        <div>
+          <div class="conductor-card-name">{{ viaje.nombre }} {{ viaje.apellido }}</div>
+          <div class="conductor-card-tel">📞 {{ viaje.telefono }}</div>
+        </div>
       </div>
-      <span class="precio-pill">${{ viaje.precio }}</span>
+      <span class="precio-pill" style="flex-shrink: 0;">${{ viaje.precio }}</span>
     </div>
 
     <hr class="viaje-divider">

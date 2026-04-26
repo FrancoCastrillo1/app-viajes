@@ -39,7 +39,13 @@
 
       <div class="auth-field">
         <label class="auth-label">Contraseña</label>
-        <input type="password" name="password" class="auth-input" placeholder="Mínimo 6 caracteres" required>
+        <div class="input-password-wrap">
+          <input type="password" id="reg-pwd" name="password" class="auth-input" placeholder="Mínimo 6 caracteres" required oninput="updateStrength(this.value)">
+          <button type="button" class="toggle-pwd" onclick="togglePwd('reg-pwd', this)" tabindex="-1" aria-label="Mostrar contraseña">👁</button>
+        </div>
+        <div class="pwd-strength-bar">
+          <div class="pwd-strength-fill" id="pwd-fill"></div>
+        </div>
       </div>
 
       <button type="submit" class="btn-auth">Crear cuenta →</button>
@@ -58,4 +64,28 @@
 
   </div>
 </div>
+
+<script>
+function togglePwd(inputId, btn) {
+  var input = document.getElementById(inputId);
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁';
+  }
+}
+function updateStrength(val) {
+  var fill = document.getElementById('pwd-fill');
+  if (!fill) return;
+  var len = val.length;
+  var pct = 0; var color = '#E5E7EB';
+  if (len >= 4)  { pct = 33; color = '#FCA5A5'; }
+  if (len >= 7)  { pct = 66; color = '#FCD34D'; }
+  if (len >= 10) { pct = 100; color = '#34D399'; }
+  fill.style.width = pct + '%';
+  fill.style.background = color;
+}
+</script>
 {% endblock %}

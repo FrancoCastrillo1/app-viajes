@@ -21,7 +21,10 @@
       </div>
       <div class="auth-field">
         <label class="auth-label">Contraseña</label>
-        <input type="password" name="password" class="auth-input" placeholder="••••••••" required>
+        <div class="input-password-wrap">
+          <input type="password" id="login-pwd" name="password" class="auth-input" placeholder="••••••••" required>
+          <button type="button" class="toggle-pwd" onclick="togglePwd('login-pwd', this)" tabindex="-1" aria-label="Mostrar contraseña">👁</button>
+        </div>
       </div>
       <button type="submit" class="btn-auth">Ingresar →</button>
     </form>
@@ -34,4 +37,17 @@
 
   </div>
 </div>
+
+<script>
+function togglePwd(inputId, btn) {
+  var input = document.getElementById(inputId);
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁';
+  }
+}
+</script>
 {% endblock %}

@@ -23,7 +23,7 @@
         <span class="rating-count">({{ resenas|length }} reseña{{ 's' if resenas|length != 1 else '' }})</span>
       </div>
       {% else %}
-      <p style="color:rgba(255,255,255,0.5);font-size:0.9rem;margin:4px 0 0;">Sin calificaciones aún</p>
+      <p class="no-rating-msg">Sin calificaciones aún</p>
       {% endif %}
     </div>
     <div class="stat-badges">
