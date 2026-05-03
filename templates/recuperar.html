@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <a href="/" class="auth-logo-text">Ruta Compartida</a>
+      <p>Viajá seguro, viajá acompañado</p>
+    </div>
+
+    <h1 class="auth-title">Recuperar contraseña</h1>
+    <p class="auth-subtitle">Ingresá tu email y te enviamos un código</p>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <p class="verify-error">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" class="auth-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="auth-field">
+        <label class="auth-label">Email</label>
+        <input type="email" name="email" class="auth-input" placeholder="tu@email.com" required autofocus>
+      </div>
+      <button type="submit" class="btn-auth">Enviar código →</button>
+    </form>
+
+    <div class="auth-divider"><span>o</span></div>
+
+    <div class="auth-footer">
+      <a href="/login">Volver al inicio de sesión</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <a href="/" class="auth-logo-text">Ruta Compartida</a>
+      <p>Viajá seguro, viajá acompañado</p>
+    </div>
+
+    <h1 class="auth-title">Nueva contraseña</h1>
+    <p class="auth-subtitle">Elegí una contraseña segura para tu cuenta</p>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <p class="verify-error">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" class="auth-form" onsubmit="return validarClave()">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="auth-field">
+        <label class="auth-label">Nueva contraseña</label>
+        <div class="input-password-wrap">
+          <input type="password" id="nueva-pwd" name="password" class="auth-input"
+                 placeholder="Mínimo 6 caracteres" required autofocus
+                 oninput="updateStrength(this.value)">
+          <button type="button" class="toggle-pwd" onclick="togglePwd('nueva-pwd', this)" tabindex="-1" aria-label="Mostrar contraseña">👁</button>
+        </div>
+        <div class="pwd-strength-bar">
+          <div class="pwd-strength-fill" id="pwd-fill"></div>
+        </div>
+      </div>
+
+      <div class="auth-field">
+        <label class="auth-label">Confirmar contraseña</label>
+        <div class="input-password-wrap">
+          <input type="password" id="confirmar-pwd" name="confirmar" class="auth-input"
+                 placeholder="Repetí tu contraseña" required>
+          <button type="button" class="toggle-pwd" onclick="togglePwd('confirmar-pwd', this)" tabindex="-1" aria-label="Mostrar contraseña">👁</button>
+        </div>
+        <p id="match-msg" style="font-size:0.8rem;margin-top:4px;color:#EF4444;display:none;">
+          Las contraseñas no coinciden.
+        </p>
+      </div>
+
+      <button type="submit" class="btn-auth">Guardar contraseña →</button>
+    </form>
+
+  </div>
+</div>
+
+<script>
+function togglePwd(inputId, btn) {
+  var input = document.getElementById(inputId);
+  if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+  else { input.type = 'password'; btn.textContent = '👁'; }
+}
+function updateStrength(val) {
+  var fill = document.getElementById('pwd-fill');
+  if (!fill) return;
+  var pct = 0; var color = '#E5E7EB';
+  if (val.length >= 4)  { pct = 33; color = '#FCA5A5'; }
+  if (val.length >= 7)  { pct = 66; color = '#FCD34D'; }
+  if (val.length >= 10) { pct = 100; color = '#34D399'; }
+  fill.style.width = pct + '%';
+  fill.style.background = color;
+}
+function validarClave() {
+  var pwd = document.getElementById('nueva-pwd').value;
+  var conf = document.getElementById('confirmar-pwd').value;
+  var msg = document.getElementById('match-msg');
+  if (pwd !== conf) { msg.style.display = 'block'; return false; }
+  msg.style.display = 'none';
+  return true;
+}
+document.getElementById('confirmar-pwd').addEventListener('input', function() {
+  var pwd = document.getElementById('nueva-pwd').value;
+  var msg = document.getElementById('match-msg');
+  msg.style.display = (this.value && this.value !== pwd) ? 'block' : 'none';
+});
+</script>
+{% endblock %}

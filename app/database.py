@@ -43,6 +43,9 @@ def run_migrations(database_url: str) -> None:
                 UNIQUE(viaje_id, autor_id, receptor_id)
             );
         """)
+        # Recuperación de contraseña
+        cursor.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_codigo VARCHAR(6);")
+        cursor.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_expiracion TIMESTAMP;")
         # Fase 2: prevenir reservas duplicadas a nivel de BD
         cursor.execute("""
             DO $$

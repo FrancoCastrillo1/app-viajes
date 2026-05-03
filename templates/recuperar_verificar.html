@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <a href="/" class="auth-logo-text">Ruta Compartida</a>
+    </div>
+
+    <h2 class="verify-title">Verificá tu identidad</h2>
+    <p class="verify-desc">
+      Te enviamos un código de 6 dígitos a tu correo. Ingresalo para continuar.<br>
+      <small style="color:#999;">El código expira en 15 minutos.</small>
+    </p>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <p class="verify-error">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" class="auth-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="text" name="codigo" placeholder="123456" required
+             class="verify-code-input" maxlength="6" autocomplete="one-time-code" autofocus>
+      <button type="submit" class="btn-auth">Verificar →</button>
+    </form>
+
+    <p class="verify-hint">
+      ¿No recibiste nada? Revisá tu carpeta de <strong>SPAM</strong> o
+      <a href="/recuperar">solicitá un nuevo código</a>.
+    </p>
+
+  </div>
+</div>
+{% endblock %}
