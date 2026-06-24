@@ -22,3 +22,28 @@ Thumbs.db
 
 # Claude Code
 .claude/
+
+# Next.js build artifacts (frontend/)
+frontend/.next/
+frontend/out/
+frontend/node_modules/
+frontend/.env.local
+frontend/.env.*.local
+
+# Flask app (kept locally, not in repo)
+app/
+templates/
+static/
+migrations/
+tests/
+*.py
+*.cfg
+*.txt
+requirements.txt
+Procfile
+Profile
+render.yaml
+wsgi.py
+.env.example
+skills-lock.json
+.agents/
