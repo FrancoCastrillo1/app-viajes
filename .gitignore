@@ -31,11 +31,11 @@ frontend/.env.local
 frontend/.env.*.local
 
 # Flask app (kept locally, not in repo)
-app/
-templates/
-static/
-migrations/
-tests/
+/app/
+/templates/
+/static/
+/migrations/
+/tests/
 *.py
 *.cfg
 *.txt
